@@ -1,0 +1,267 @@
+%% It is just an empty TeX file.
+%% Write your code here.
+%% 
+
+\documentclass{article}     % Specifies the document class
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{remark}{Remark}
+\usepackage{enumerate}
+\usepackage{float}
+
+
+                             % The preamble begins here.
+\title{Problem Sheet 5}  % Declares the document's title.
+\author{WEI PENG}      % Declares the author's name.
+\date{\today}      % Deleting this command produces today's date.
+
+\newcommand{\ip}[2]{(#1, #2)}
+                             % Defines \ip{arg1}{arg2} to mean
+                             % (arg1, arg2).
+
+%\newcommand{\ip}[2]{\langle #1 | #2\rangle}
+                             % This is an alternative definition of
+                             % \ip that is commented out.
+
+\begin{document}           % End of preamble and beginning of text.
+\maketitle                   % Produces the title.
+
+\emph{You are incourage to discuss with your classmates whenever you find it helpful}
+
+\noindent
+\textbf{Probelm 1}. Show that the following SDEs are all exacts. Solve them explicitly with the given initial data. Here $B_t$ is a one dimensional Brownian motion.
+\begin{enumerate}[(1)]
+    \item The stochastic harmonic oscillator motion model:
+    \[
+     \begin{cases}
+     dX_t = Y_tdt\\
+     mdY_t = -kX_tdt - cY_tdt + \sigma dX_t
+     \end{cases}
+     \]
+     \item The stochastic RLC circuit model:
+     \[\begin{cases}
+     dX_t = Y_tdt \\
+     LdY_t = - RY_tdt - \frac{1}{C}X_tdt + G(t)dt + \alpha dB_t
+     \end{cases}\]
+     where $R$, $C$, $L$, $\alpha$ are positive constants. Inital data is arbitrary.
+     \item The stochastic population growth model:
+     \[ dX_t = rX_t(K - X_t)dt + \beta X_t dB_t\]
+     where $r$, $K$, $\beta$ are positive constants. Inital data is $X_0 = x>0$.
+\end{enumerate}
+
+\begin{proof}
+
+\begin{enumerate}[(1)]
+    \item stochastic harmonic oscillator model is a specical case of stochastic RLC circuit model.
+    \item the model can be viewed as 
+    \[d \begin{bmatrix}
+        X_t \\
+        Y_t
+        \end{bmatrix} = \begin{bmatrix}
+        0 \\
+        \frac{\alpha}{L}
+        \end{bmatrix}dB_t + \begin{bmatrix}
+        0 & 1 \\
+        -\frac{1}{LC} & -\frac{R}{L}\end{bmatrix}
+        \begin{bmatrix}
+        X_t \\
+        Y_t 
+        \end{bmatrix} + \begin{bmatrix} 
+        0\\
+        \frac{G(t)}{L}
+        \end{bmatrix}dt   \]
+        let $W_t = \begin{bmatrix}
+        t\\
+        X_t\\
+        Y_t
+        \end{bmatrix}$, $\widetilde{\sigma}=\begin{bmatrix}
+        0 & 0 & 1\\
+        0 & 1 & 0\\
+        0& -\frac{1}{LC}  & -\frac{R}{L}
+        \end{bmatrix}$, $\widetilde{b} = \begin{bmatrix}
+        1\\
+        0\\
+        \frac{G(t)}{L}
+        \end{bmatrix}$,
+        It is easy to see that $\widetilde{\sigma},\widetilde{b}$ are locally Lipschitz continuous(provided $G(t)$ is locally Lipschitz continuous), so the SDE is exact.
+        Now we are going to solve the origial SDE:\\
+        Let $Z_t =\begin{bmatrix}
+        X_t \\
+        Y_t 
+        \end{bmatrix} $, then each side times $e^{-At}$, where $A = \begin{bmatrix}
+        0 & 1 \\
+        -\frac{1}{LC} & -\frac{R}{L}\end{bmatrix}
+        $, by Ito formula, 
+        $d e^{-At}Z_t = -A e^{-At}Z_tdt + e^{-At}dZ_t$
+        thus 
+        \[Z_t = e^{At}[Z_0 + \int_0^t e^{-As}\begin{bmatrix}
+        0\\
+        \frac{\alpha}{L}
+        \end{bmatrix}dB_s + \int_0^t e^{-As}\begin{bmatrix}
+        0 \\
+        \frac{G(t)}{L}
+        \end{bmatrix}ds]\]
+   \item $b(x) = rKx(K-x)$ is locally Lipchitz continous, and $\sigma(x) = \beta x$ continuous,and satisfies \[|\sigma(x)-\sigma(y)|\leq \beta|x-y|\quad x,y \in \mathbb{R}^1\]
+   $\rho = \beta x$, absolutely $\int_{0^{+}}^{\infty} \rho^{-2}\,dx = \infty$, so the SDE has a weak solution and pathwise uniqueness(or just by seeing that both $\sigma,b$ are locally Lipschitz continuous), by Yamada theorem, it is exact. 
+        \begin{eqnarray*}
+            d\frac{1}{X_t} & = & -\frac{1}{X_t^2}dX_t + \frac{1}{X_t^3}d\langle X \rangle_t \\
+            & = & (\frac{-rK+\frac{1}{2}\beta^2}{X_s}) ds + rds -\frac{\beta}{X_s} dB_s
+        \end{eqnarray*}
+        then 
+        \[d(\frac{1}{X_t}\exp\{rK-\beta^2 - \beta B_s\})= \exp \{rK-\frac{1}{2}\beta^2+\beta B_s\} rds \]
+        which implies the exact solution of the stochastic population growth model is :
+        \[X_t = \frac{\exp\{(rK-\frac{1}{2}\beta^2)t+\beta B_s\}}{\frac{1}{X_0} + r\int_0^t \exp\{(rK-\frac{1}{2}\beta^2)t+\beta B_s\}ds}\]
+        
+\end{enumerate}
+
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\noindent
+\textbf{Problem 2}. Let $B_t$ be a one dimensional Brownian motion on a filtered probability space $(\Omega,\mathcal{F}, \mathbb{P}, \{\mathcal{F}_t\})$ which satisfies the usual conditions.
+\begin{enumerate}
+    \item Define $X_t \triangleq B_t - t B_1$, $(0\leq t \leq 1)$. Show that $X_t$ is a Gaussian process. Compute its mean and covariance function $\rho(s,t) \triangleq E[X_sX_t]$, $(0\leq s,t\leq 1)$.
+    \item Find the solution $Y_t$, $(0\leq t < 1)$ to the SDEs
+    \[\begin{cases}
+    dY_t = dB_t - \frac{Y_t}{1-t}dt, \quad 0\leq t < 1\\
+    Y_0 = 0.\end{cases}\]
+    Show that $Y_t$ has the same law as $X_t$, $(0 \leq t < 1)$. In particular, $\lim_{t\uparrow 1} Y_t = 0$ almost surely and we can define $Y_1 \triangleq 0$. This defines $Y_t$, $(0\leq t \leq 1)$ which has the same law as $X_t$, $(0\leq t \leq 1)$.
+    \item Show that 
+    \[\mathbb{P}(\sup_{0\leq t \leq 1}Y_t \geq x) = e^{-2x^2},\quad x\geq 0.\]
+    \end{enumerate}
+    \begin{proof}
+    \begin{enumerate}
+        \item by observing that $(X_{t_1},\cdots X_{t_n})$ is a linear combination of $B_{t_1},B_{t_2}-B_{t_1}, \cdots B_1 - B_{t_n}$, we conclude that $X_t$ is a Gaussian process. 
+        \[E[X_t] = 0 ,\quad E[X_tX_s]= \min\{s,t\} - st\]
+        \item \[d(\frac{1}{1-t}Y_t) = \frac{1}{(1-t)^2}Y_tdt + \frac{1}{1-t}dYt\]
+        so \[d(\frac{1}{1-t}Y_t) = \frac{1}{1-t}dB_t\], then the solution to the SDE is 
+        \[Y_t = (1-t)\int_0^t \frac{1}{1-s}dB_s \]
+        Let $M_t = \int_0^t \frac{1}{1-s}dB_s$, $M_t$ is a square integrable matingale on $[0,1)$, 
+        \[\langle M \rangle_t = \frac{1}{1-t}-1\]
+        by D.D.S theorem, there exsts a standard Brownian motion $B_t$, such that $M_t = B_{\langle M \rangle_t}$ on $[0,1)$, so we have 
+        \[\lim_{t\uparrow 1}Y_t = \lim_{t\uparrow 1}  \frac{B_{\langle M \rangle_t}}{\langle M \rangle_t + 1}\rightarrow 0 \quad a.s.\]
+        and $E[Y_t]= E[\frac{1}{1-t}M_t] = 0 $, 
+        \[E[Y_sY_t] = (1-t)(1-s)E[M^2_{s\vee t}] = (1-s)(1-t)E[\langle M \rangle_{s\vee t}] = s\vee t -st\]
+        define $Y_1 \triangleq 0$, then $Y_t$ has the same law as $X_t(0\leq t \leq 1)$.    
+        \item  
+        For a Brownian bridge, we have the general inequality 
+        \[\mathbb{P}(\sup_{0\leq s\leq k} X_t \geq x)=1- \Phi(\frac{x}{\sqrt(k(1-k))}+ e^{-2x^2}(1-\Phi(\frac{x(1-2k)}{k(1-k)}))\]
+        so we have \[\mathbb{P}(\sup_{0\leq t \leq 1}Y_t \geq x) = \mathbb{P}(\sup_{0\leq t \leq 1} X_t \geq x) = e^{-2x^2},\quad x>0  \] 
+    \end{enumerate}
+    \end{proof}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+\noindent
+    \textbf{Problem 3}. Consider the one dimensional SDE
+    \[dY_t = 3Y_t^2 dt - 2|Y_t|^{\frac{3}{2}}dB_t\]
+    \begin{enumerate}[(1)]
+        \item Show that this SDE is exact (in the context with possible explosion).
+        \item Show that if $Y_0\geq 0$, then $Y_t\geq 0$ for all t up to its explosion time $e$.
+        \item Suppose that $Y_0=1$. Compute $\mathbb{P}(e>t)$ for $t\geq 0$. Conclude that $\mathbb{P}(e<\infty) = 1$ but  $E[e] = \infty$.
+    \end{enumerate}
+    \begin{proof}
+    \begin{enumerate}[(1)]
+    \item $\sigma(Y_t) = -2|Y_t|^{\frac{3}{2}}$, $b(Y_t) = 3Y_t^2$
+    since $\sigma,b$ are locally Lipschitz continuous. so the SDE is exact.
+    \item Consider the following SDE
+    \[dY'_t = -2|Y'_t|^{\frac{3}{2}}dB_t\],
+    $Y'_t = 0$ is a solution, since $b\geq 0$ and $Y_0 \geq Y'_0$, 
+    \[||x|^{\frac{3}{2}}-|y|^{\frac{3}{2}}| \leq \rho(|x-y|)\]
+   (can't find such $\rho$ explicilty)by comparison theroem, we have $Y_t\geq 0 $ for all t up to its explosion time.
+    \item by Ito formula, 
+     \[d(Y_t)^{-\frac{1}{2}} = dB_t\]
+     \[Y_t = \frac{1}{(1+B_t)^2}\]
+     then $\mathbb{P}(e> t) = \mathbb{P}(\tau_{-1} > t)$, where $\tau_{-1} = \inf\{t\geq 0, B_t =-1\}$
+     \[\mathbb{P}(\tau_{-1}>t) = \mathbb{P}(\tau_1> t)1-2P(B_t \geq 1)=1-2\int_1^{\infty}\frac{1}{\sqrt{2\pi t}}e^{-\frac{x^2}{2t}}dx \]
+     then $\mathbb{P}(e>t) =\int_{-1}^1 \frac{1}{\sqrt{2\pi t}}e^{-\frac{x^2}{2t}}dx\geq Ct^{-\frac{1}{2}}$, when $t\geq T$, so $E[e]=\infty$.
+    \end{enumerate}
+    \end{proof}
+    
+
+\noindent
+\textbf{Problem 4}. 
+  \begin{enumerate}[(1)]
+    \item Let $H,G$ be continuous semimartingales with $\langle H,G \rangle = 0$ and $H_0$. Show that if 
+    \[Z_t \triangleq \xi_t^G \int_0^t (\xi_s^G)^{-1}\,dH_s\]
+    where $\xi_t^G $ is the stochastic exponential of $G$ defined by
+    \[Z_t = H_t + \int_0^t Z_s \,dG_s\] 
+    \item consider the following two SDEs on $\mathbb{R}^1$:
+    \[dX_t^i = \sigma(t,X_t)dB_t + b^i(X_t)dt,\quad i = 1,2\]
+    where $\sigma : [0,\infty)\times \mathbb{R}^1\rightarrow \mathbb{R}^1$, $b^i : \mathbb{R}^1 \rightarrow \mathbb{R}^1$ are bounded continuous, $\sigma$ is Lipschitz continuous and one of $b^i$ is Lipschitz continuous. Suppose further that $b^1 < b^2$ everywhere. Let $X_t^i$ be a solution to the above SDE with $i=1,2$ respectively , defined on the same filtered probability space with the same Brownian motion, such that $X_0^1 < X_0^2$ almost surely. by putting $Z_t = X_t^2-X_t^1$, and choosing a suitable positive bounded variation process $H_t$ and a continuous semimartingale $G_t$ in the first part of the question, show that
+     \[ \mathbb{P}(X_t^1 < X_t^2~\forall t\geq 0) = 1\]
+     Given an example to show taht if $\sigma$ is not Lipschitz continuous, then the conclusion can be false even $b^1,b^2$ are Lipschitz continuous.
+\end{enumerate}
+\begin{proof}
+\begin{enumerate}
+    \item $\xi_t^G = e^{G_t - \frac{1}{2} \langle G \rangle_t}$, $d\xi_t^G = \xi_t^G dG_t $, thus \begin{eqnarray*}
+        dZ_t & = & d\xi_t^G\int_0^t (\xi_s^G)^{-1}dH_s + \xi_t^G(\xi_t^G)^{-1}dH_s + d\langle \xi_.^G, \int_0^t (\xi_s^G)^{-1}dH_s \rangle \\
+        & = & Z_s\,dG_s + dH_s + d\langle \int_0^t \xi_s^G dG_s, \int_0^t (\xi_s^G)^{-1}dH_s \rangle \\
+        & = & Z_s\,dG_s + dH_s + d\langle G,H \rangle_t\\
+        & = & dH_t + Z_t\,dG_t   
+        \end{eqnarray*}
+        then $Z_t$ satisfies $Z_t = H_t + \int_0^t Z_s \,dG_s$
+        
+\end{enumerate}
+\end{proof}
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

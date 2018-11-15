@@ -1,0 +1,556 @@
+\documentclass{article}
+
+\usepackage[left=1.25in,top=1.25in,right=1.25in,bottom=1.25in,head=1.25in]{geometry}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+\usepackage{verbatim,float,url,enumerate}
+\usepackage{graphicx,subfigure,psfrag}
+\usepackage{natbib}
+\usepackage{environ}
+\usepackage{hyperref}
+\usepackage{pifont}       
+
+\newtheorem{algorithm}{Algorithm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\newcommand{\argmin}{\mathop{\mathrm{argmin}}}
+\newcommand{\argmax}{\mathop{\mathrm{argmax}}}
+\newcommand{\minimize}{\mathop{\mathrm{minimize}}}
+\newcommand{\maximize}{\mathop{\mathrm{maximize}}}
+\newcommand{\st}{\mathop{\mathrm{subject\,\,to}}}
+\newcommand{\dist}{\mathop{\mathrm{dist}}}
+\newcommand{\minimizewrt}[1]{\underset{#1}{\minimize}}   
+\newcommand{\maximizewrt}[1]{\underset{#1}{\maximize}}  
+\newcommand{\subjectto}{\mbox{subject to}}                       
+\newcommand{\ones}{\mathrm 1}                                          
+\newcommand{\diag}{\mathop{\rm diag}}                               
+
+\newcommand{\reals}{\mathbb R}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\prox}{\operatorname{prox}}
+\newcommand{\dom}{\operatorname{dom}}
+\def\R{\mathbb{R}}
+\def\E{\mathbb{E}}
+\def\P{\mathbb{P}}
+\def\Cov{\mathrm{Cov}}
+\def\Var{\mathrm{Var}}
+\def\half{\frac{1}{2}}
+\def\sign{\mathrm{sign}}
+\def\supp{\mathrm{supp}}
+\def\th{\mathrm{th}}
+\def\tr{\mathrm{tr}}
+\def\dim{\mathrm{dim}}
+\def\hbeta{\hat{\beta}}
+\usepackage{listings}
+\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+
+\begin{document}
+
+
+\lstset{language=Matlab,%
+    %basicstyle=\color{red},
+    breaklines=true,%
+    morekeywords={matlab2tikz},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=9pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+    %emph=[2]{word1,word2}, emphstyle=[2]{style},    
+}
+
+\title{Homework 3}
+
+\author{\Large Convex Optimization 10-725/36-725}
+\date{{\bf Due Friday October 14 at 5:30pm \\
+submitted to Christoph Dann in Gates 8013} \\
+(Remember to a submit separate writeup for each \\ 
+problem, with your name at the top)\\
+\bigskip Total: 75 points\\
+v1.0}
+\maketitle
+
+\section{Duality in Linear Programs (17 pts) [Mariya]}
+\begin{enumerate}[(a, 3pts)]
+	\item Derive the dual of 
+		\begin{align*}
+		\min_{x_1,x_2} \quad - 4x_1 & + 2x_2 \\
+		\subjectto \quad   - x_1 & + x_2 \geq 2 \\
+				     x_1 & - x_2 \geq 1 \\
+				     & x_1,x_2 \geq 0
+		\end{align*}
+		What are the primal optimal value and the dual optimal value? What is the duality gap?
+	\item[(b, 14pts)] Both Ryan and the TAs want many students to attend their office hours. However, the TAs have noticed that students are less likely to go to their office hours if they attend Ryan`s, so the TAs decide to sabotage Ryan's office hours. The TAs will block the paths between class in Wean and Ryan's office in Baker. 
+	
+	\quad \quad In this problem, we think of the CMU campus as a directed graph $G = (V,E,C)$. Here, vertices $v_i,v_j\in V$ correspond to the $i^{th}$ and $j^{th}$ landmark, e.g. the Wean caf\'{e} and the $1^{st}$ floor of Porter, the directed edge $(i,j) \in E$ is the directed path from $v_i$ to $v_j$, and the capacity $c_{ij} \in C$ is the maximum number of convex optimization students that can pass through $(i,j)$. Students start from $v_s$, our classroom in Wean, and move along the directed edges towards $v_t$, Ryan's office. We assume there are no edges that end in $v_s$ or originate in $v_t$.
+	
+	\quad \quad The TAs decide to block paths by building barricades. However, they want to do as little physical labor as possible, so they only want to block the tightest path (i.e. smallest total capacity) in a way that still prevents every student from reaching Ryan's office.
+	
+	\quad \quad In other words, the TAs want to find a partition, or cut, $C = (S,T)$ of $V$, such that $v_s \in S$ and $v_t \in T$ and it has minimum capacity. The capacity of a cut is defined as:
+	\begin{equation*}
+	    c(S,T) = \sum_{(i,j)\in E}b_{ij}c_{ij}
+	\end{equation*}
+	where $b_{ij} = 1$ if $v_i \in S$ and $v_j \in T$, and $b_{ij} = 0$ otherwise.
+	
+	\quad \quad The TA's min cut problem can be formulated as follows:
+	    \begin{equation} \label{eq:ILP}
+        \begin{aligned}
+		\min_{b\in \mathbb{R}^{|E|}, x\in \mathbb{R}^{|V|}} \quad & \sum_{(i,j)\in E}b_{ij}c_{ij} \\
+		\subjectto \quad  \quad   & x_s = 1, x_t = 0 \\
+				     &  b_{ij}  \geq x_i - x_j \\
+    				     & b_{ij}, x_i, x_j \in \{0,1\} \\
+    				     & \text{for all} \; (i,j) \in E
+		\end{aligned}
+		\end{equation}
+    \begin{enumerate}
+    \item[( i. 1pt)] Explain what the variables $x_i$ and $x_j$ for all $(i,j) \in E$ mean and why the introduction of these variables is necessary (hint: what would happen if the $x_i,x_j$ variables weren`t introduced?).
+	\item[( ii. 1pt)]  The problem in \eqref{eq:ILP} is an integer linear program (ILP), because its variables take integer values. Because ILPs are mostly difficult to solve, they are often relaxed to LPs. Consider the following relaxation of the integer constraints in \eqref{eq:ILP}:
+	    \begin{equation}
+        \begin{aligned}
+		\min_{b\in \mathbb{R}^{|E|}, x\in \mathbb{R}^{|V|}} \quad & \sum_{(i,j)\in E}b_{ij}c_{ij} \\
+		\subjectto \quad    \quad  &  b_{ij}  \geq x_i - x_j \quad \text{for all} \; (i,j) \in E \\
+    				                & b \geq 0 \\
+    				                & x_s - x_t \geq 1 \\
+		\end{aligned}
+		\label{eq:LP}
+		\end{equation}
+	How does the optimal value of the original ILP, $f^{\star}_{ILP}$, compare to the optimal value of the relaxed LP, $f^{\star}_{LP}$?
+	\item[( iii. 6pts)]  Next, derive the dual of \eqref{eq:LP}. Use the following dual variables $f \in \mathbb{R}^{|E|}, y \in \mathbb{R}^{|E|}, w \in \mathbb{R}$ corresponding to the constraints in the order they appear in \eqref{eq:LP}.
+	\item[( iv. 2pts)]  What does each constraint of the dual you derived in (iii.) mean in the setting of our path-blocking problem? Hint: the dual of the relaxed min-cut problem is called max-flow.
+	\item[ (v. 1pt)]  Finally, how does the optimal value of the relaxed LP, $f^{\star}_{LP}$, compare to the optimal value of the dual, $f^{\star}_{dual}$? 
+	\item[(vi. 1pt)] Interestingly, a well-known theorem (the max-flow min-cut theorem) tells us is that the original ILP and the max flow problem have equal optimal criterion values. What does this result imply about the tightness of the convex relaxation of the ILP?
+	\item[(vii. 2pts)] Consider the setting of our path-blocking problem in Figure \ref{fig:mincut}. The capacities of all edges are shown in the figure, and the min cut has been drawn. Which paths will the TAs barricade? What is the value of the max flow in this problem?
+%	\begin{figure}
+  %         	\centering
+   %         	\includegraphics[width=1\textwidth]{Q1b.png}
+    %        	\caption{Min cut of the path-blocking problem}
+     %       	\label{fig:mincut}
+      %     \end{figure}
+	\end{enumerate}
+\end{enumerate}
+
+
+\begin{proof}
+\begin{enumerate}[(a)]
+    \item $f_p= +\infty, f_d=-\infty$, the duality gap is $\infty$.
+    \item \begin{enumerate}[(i)]
+        \item if $x_i=1$, then $i\in S$; if $x_i=0$, then $x_i\in T$. If the $x_i,x_j$ variables weren't introduced, it will be hard to put constraint on $b_{ij}$. Since we need that $b_{i,j=1}$ if $v_i\in S$ and $v_j\in T$, and $b_{ij}=0$ otherwise.
+        \item $f*_{ILP}\geq f*_{LP}$, since the feasible rregion of $LP$ is wider than that of $ILP$.
+        \item \begin{eqnarray*}L(b,x,f,y,w) & = &\sum_{(i,j)\in E}b_{ij}c_{ij}-+\sum_{(i,j)\in E} f_{ij}(x_i-x_j-b_{ij})-\sum_{(i,j)\in E}y_{ij}b_{ij}+w(1-x_s+x_t)\\
+            & = & \sum_{(i,j)\in E}[b_{ij}(c_{ij}-f_{ij}+y_{ij})+f_{ij}(x_i-x_j)]+w(1-x_s+x_t)\\
+            & = & \sum_{(i,j)\in E}b_{ij}(c_{ij}-f{ij}+y_{ij})+\sum_{k\in V/\{s,t\}}(\sum_i f_{ik}-\sum_{j}f_{kj})x_k\\
+            &~&+(w-\sum_jf_{sj})x_s- (\sum_if_{i,t}-w)x_t+w
+            \end{eqnarray*}
+\[g(f,y,w)=\inf_{b,x}L(b,x,f,y,w)=\begin{cases}
+    w, \quad  c_{ij}-f_{ij}+y_{ij}=0, \forall (i,j)\in E \\
+     \quad (\sum_i f_{ik}-\sum_{j}f_{kj})=0,\forall k\in V/ \{s,t\}\\
+     \quad w-\sum_jf_{sj}=0; \sum_if_{it}-w=0 \\
+   -\infty, \quad \text{otherwise}
+    \end{cases}\]
+ thus the dual problem would be:
+ \begin{equation*}
+\begin{aligned}
+& \underset{c,f} {\text{minimize}}
+& & \sum_{(s,j)\in E}f_{sj} \\
+& \text{subject to}
+&& f_{ij} \leq  c_{ij}\\
+&&& f_{ij}\geq 0\\
+&&& \sum_i f_{ik}=\sum_{j}f_{k,j},\; \forall k\in V /\{s,t\}
+\end{aligned}
+\end{equation*}
+\item  Capacity Constraint:the flow of an edge cannot exceed its capacity $c_{ij}$;  Conservation of Flows: the sum of the flows entering a node must equal the sum of the flows exiting a node, except for the source and the sink nodes.
+\item since Slater's conditions hold, $f*_{LP}=f*_{dual}$.
+\item It implies $f*_{ILP}=f*_{LP}$.
+\item The TAs should barricades Wean classroom $\rightarrow$ Wean cafe and Baker $1^{st}$ floor $\rightarrow$ Ryan's office. The maximum value of  flow is 50.
+        \end{enumerate}
+\end{enumerate}
+\end{proof}
+
+
+
+
+
+\section{Practice with KKT conditions and duality (17 points) [Justin]}
+\begin{enumerate}
+  \item [(a)] Take the LP:
+    \begin{equation}\label{eq:orig-linear-program}
+      \text{min}_x \;\; c^Tx \text{ such that } Ax=b \text{
+        and } x \ge 0
+    \end{equation}
+    (where the inequality is defined element-wise) and now consider the second,
+    similar optimization problem
+    \begin{equation}\label{eq:barrierized-linear-program}
+      \text{min}_x\;\; c^Tx - \tau \beta \sum_i \log (x_i) \text{ such that } Ax=b
+    \end{equation}
+    The second term in the objective is sometimes called the log barrier
+    function, and acts as a `soft' inequality constraint, because it will tend
+    to positive infinity as any of the $x_i$ tend to zero from the right.
+    \begin{enumerate}
+        \item[(i, 2pts)] Derive the dual of the original LP.
+\item[(ii, 2pts)] Then derive the KKT of original LP in    \eqref{eq:orig-linear-program}.
+\item[(iii, 2pts)] Then derive the KKT of the second problem with the log barrier problem
+    in \eqref{eq:barrierized-linear-program}.  
+\item[(iv, 2pts)] Describe the differences in the two KKT conditions. (Hint: what can you
+    observe about the second set of KKT conditions when $\tau$ is taken to be
+    large?)  
+    \end{enumerate}
+
+    Throughout, assume that $\{x: x>0, Ax=b\}$ and $\{y: A^Ty < c\}$ are
+    non-empty. i.e. the primal LP and its dual are both strictly feasible.
+
+  \item [(b, 9 pts)] Take the least squares regression problem (for
+    $X\in\mathbb{R}^{n\times p}$ and $y \in \mathbb{R}^n$):
+    \begin{equation}
+      \text{min}_{\beta\in\mathbb{R}^p}\|y-X\beta\|_2
+    \end{equation}
+    Prove that an equivalent dual of this problem is
+    \begin{equation}
+      \text{min}_{v\in\mathbb{R}^n} \|y-v\|_2^2 \text{ subject to } X^Tv = 0
+    \end{equation}
+    (Hint: in deriving the dual, you may start by introducing the auxiliary
+    variable $z=X\beta$.) What is the relationship between the primal and the
+    dual solutions, implied by the KKT conditions? Explain why this relationship
+    makes sense, given what you know about projections onto linear subspaces.
+\end{enumerate}
+
+    
+\begin{proof}
+
+\begin{enumerate}[(a)]
+    \item \begin{enumerate}[(i)]
+        \item \begin{equation*}
+\begin{aligned}
+& \underset{y}{\text{minimize}}
+& & -y^Tb \\
+& \text{subject to}
+& & A^Ty+c \succcurlyeq 0
+\end{aligned}
+\end{equation*}
+\item \[\left \{ \begin{array}{cc}
+    c-u+A^Ty=0 & \text{(stationarity)}\\
+    u_ix_i=0~\forall i& \text{(complementary slackness)}\\
+    x_i\geq 0~\forall i, Ax=b& \text{(primal feasibility)}\\
+   u_i\geq 0 ~\forall i & \text{(dual feasiblity)}
+    \end{array}\right.
+     \]
+\item  \[\left \{ \begin{array}{cc}
+     c_i-\frac{\tau}{x_i}+A_i^Ty= 0~\forall i &  \text{(stationarity)}\\
+     Ax=b & \text{(primal feasibility)}
+     \end{array}\right.
+     \]
+\item  (??????????????????????????????????????????????)
+\end{enumerate}
+\item consider the following equivalent problem of the primal problem:
+\begin{equation*}
+\begin{aligned}
+& \underset{\beta\in \mathbb{R}^n}{\text{minimize}}
+& & ||y-z||^2_2 \\
+& \text{subject to}
+& & X\beta=z
+\end{aligned}
+\end{equation*}
+let $L(\beta,z,v)=||y-z||_2^2+2v^T(z-X^\beta)$,where $v\geq 0$, so the dual problem of the above one is:
+ \begin{equation*}
+\begin{aligned}
+& \underset{v}{\text{minimize}}
+& & ||y-v||_2^2\\
+& \text{subject to}
+& & X^Tv=0
+\end{aligned}
+\end{equation*} 
+The corresponding KKT conditions are:
+\[\left \{ \begin{array}{cc}
+    z-y-v=0 & \text{(stationarity)}\\
+    z=X\beta & \text{(primal feasibility)}\\
+    X^Tv=0 & \text{(dual feasibility)} \end{array}\right.
+    \]
+The KKT conditions impies that $v=y-X\beta$.
+   
+        \begin{figure}[H]
+  \centering
+\includegraphics[width=4in]{projection}
+  \caption[]
+   { projection perspective}
+\end{figure}
+
+\end{enumerate}
+\end{proof}
+
+
+
+
+\section{Convex conjugate and Moreau decomposition (18 pts) [Han]}
+The convex conjugate of a function $h: \RR^n\mapsto\RR$ is defined as follows:
+$$h^*(x) = \sup_{y\in\text{dom}(h)}x^Ty - h(y)$$
+Also recall that the proximal operator for function $h(\cdot)$ with $t > 0$ is defined as:
+$$\prox_{th}(x) = \argmin_{z}\frac{1}{2}||z-x||_2^2 + th(z)$$
+    \begin{enumerate}[(a)]
+        \item[(a, 3 pts)]     Show that $(th)^*(x) = th^*(x/t)$. 
+        \item[(b, 4 pts)]     Let $f:\RR^n\mapsto\RR$ be a closed and convex function. Show that $y\in\partial f(x)\Leftrightarrow x\in\partial f^*(y)$. (\emph{Hint: Recall that for closed and convex function $f$, we have $f^{**} = f$}).
+        \item[(c, 4 pts)]    Show that 
+                $$x = \prox_{th}(x) + t\prox_{\frac{1}{t}h^*}(x/t)$$
+                This is known as the \emph{Moreau decomposition}. (\emph{Hint: Feel free to use the results from (a) and (b) to prove this theorem. The subgradient optimality condition may be useful here.})
+        \item[(d, 3 pts)]     Let $h(y) = ||y||$ be a norm of $y$. Prove that its conjugate is $h^*(x) = \mathbb{I}_{\{z: ||z||_*\leq 1\}}(x)$.
+        \item[(e, 4 pts)]     Let $h(z) = ||z||_\infty$, where $||z||_\infty$ is defined as $||z||_\infty = \max_{i = 1, \ldots, n}|z_i|$. Compute the proximal operator $\prox_{th}(x)$ of $h(z) = ||z||_\infty$. Note that for this question you do not need to give an analytic solution for the prox operator. As long as you believe each part of your answer to be directly computable by a known algorithm, this is fine. (\emph{Hint: You may find the results from (c) and (d) helpful.})
+    \end{enumerate}
+
+\begin{proof}
+\begin{enumerate}[(a)]
+    \item \[(th)^*=\sup_{y\in dom(h)}x^Ty-th(y)=t\sup_{y\in dom(h)}\frac{1}{t}x^Ty-h(y)=th^*(x/t)\]
+    \item \begin{eqnarray*}
+        x \in \partial f(x) &\iff & f(z)\geq f(x)+y^T(z-x),\quad \forall z\\
+         & \iff & x^Ty- f^*(y)\geq f(x)\\
+         & \iff & x^Ty - f^*(y)\geq f^{**}(x)\\
+         & \iff & f^*(z)\geq f^*(x)+y^T(z-x) \quad \forall z\\
+         & \iff & y \in \partial f^*(x)
+        \end{eqnarray*}
+\item we only need to prove that 
+\[x= \prox_f(x)+\prox_{f^*}(x)\]
+  \begin{eqnarray*}
+      x \in prox_f(x) & \iff & x-u\in \partial f(u)\\
+                      & \iff &  u \in \partial f^*(x-u)\\
+                      & \iff & x-u \in \prox_{f^*}(x)
+  \end{eqnarray*}
+\item \[h^*(z)=\sup_{y} z^Ty-||y||=\sup_{y} ||y||(z^T\frac{y}{||y||}-1)=\begin{cases}
+   \infty, \quad ||z||_*>1\\
+   0, \quad ||z||_*\leq 1 \end{cases}\]
+\item  we have that $\prox_{th}(x) = x- t\prox_{\frac{1}{t}h^*}(x/t)$ and 
+   \[t\prox_{\frac{1}{t}h^*}(x/t)=t\prox_{\frac{1}{t}||\cdot||_1}(x/t)=\begin{cases}
+       x_i-1,\quad x_i>1\\
+       x_i+1,\quad x_i<-1\\
+       0,\quad -1\leq x_i\leq 1\end{cases}\]
+\end{enumerate}
+
+
+
+
+
+\end{proof}
+
+\section{Support vector machines and duality (23 points) [Christoph \& Alnur]}
+
+In binary classification, we are, roughly speaking, interested in finding a hyperplane that separates two clouds of points living in, say, $\reals^p$.  The support vector machine (SVM), which we covered a little in class, is a pretty popular method for doing binary classification; to this day, it's (still) used in a number of fields outside of just machine learning and statistics.
+
+One issue with the standard SVM, though, is that it doesn't work well in situations where we pay a higher ``price'' for misclassifications of one of the two point-clouds.  For example, a bank will probably want to be quite certain that a customer won't default on their loan before deciding to give them one (here, the ``price'' that we pay is monetary).  In this problem, you will develop a variant of the standard SVM that addresses these issues, called the \textit{cost-sensitive} SVM.  You will implement your own cost-sensitive SVM solver (in part (b) of this question), but as a starting point, we will first investigate the cost-sensitive SVM dual problem (in part (a) of this question).
+
+Throughout, we assume that we are given $n$ data samples, each one taking the form $(x_i, y_i)$, where $x_i \in \reals^p$ is a feature vector and $y_i \in \{-1,+1\}$ is a class.  In order to make our notation more concise, we can transpose and stack the $x_i$ vertically, collecting these feature vectors into the matrix $X \in \reals^{n \times p}$; doing the same thing with the $y_i$ lets us write $y \in \{-1,+1\}^n$.  It will also be useful for us to define the following sets, containing the indices of the positive (i.e., those with $y_i = +1$) and negative (i.e., those with $y_i = -1$) samples, respectively:
+\[
+\mathcal{S}_1 = \{ i \in \{1,\ldots,n\} : y_{i} = +1 \}, \quad \mathcal{S}_2 = \{ i \in \{1,\ldots,n\} : y_{i} = -1 \}.
+\]
+
+\subsection*{Part (a)}
+One simple way to incorporate misclassification costs into the standard SVM formulation, is to pose the following (primal) cost-sensitive SVM optimization problem:
+\begin{equation}
+\begin{array}{ll}
+\minimizewrt{\beta \in \reals^p, \; \beta_0 \in \reals, \; \xi \in \reals^n} & (1/2) \| \beta \|_2^2 + C_1 \sum_{i \in \mathcal{S}_1} \xi_i + C_2 \sum_{i \in \mathcal{S}_2} \xi_i \\
+\subjectto & \xi_i \geq 0, \quad y_i( x_i^T \beta + \beta_0) \geq 1 - \xi_i, \quad i=1,\ldots,n,
+\end{array}
+\label{eq:svm:primal}
+\end{equation}
+where $\beta \in \reals^p, \; \beta_0 \in \reals, \; \xi = (\xi_1, \ldots, \xi_n) \in \reals^n$ are our variables, and $C_1, C_2$ are positive costs, chosen by the implementer.  (Just to remind you of some of the intuition here: when $C_1 = C_2$, problem \eqref{eq:svm:primal} can be viewed as another way of writing a squared $\ell_2$-norm penalized hinge loss minimization problem.)
+
+\begin{enumerate}
+\item[(i, 2pts)] Does strong duality hold for problem \eqref{eq:svm:primal}?  Why or why not?  (Your answer to the latter question should be short.)
+\item[(ii, 3pts)] Derive the Karush-Kuhn-Tucker (KKT) conditions for problem \eqref{eq:svm:primal}.  Please use $\alpha \in \reals^n$ for the dual variables (i.e., Lagrange multipliers) associated with the constraints ``$y_i( x_i^T \beta + \beta_0) \geq 1 - \xi_i, \; i=1,\ldots,n$'', and $\mu \in \reals^n$ for the dual variables associated with the constraints ``$\xi_i \geq 0, \; i=1,\ldots,n$''.
+\item[(iii, 3pts)] Show that the cost-sensitive SVM dual problem can be written as
+\begin{equation}
+\begin{array}{ll}
+\maximizewrt{\alpha \in \reals^n} & -(1/2) \alpha \tilde X \tilde X^T \alpha + \ones^T \alpha \\
+\subjectto & y^T \alpha = 0, \quad 0 \leq \alpha_{\mathcal{S}_1} \leq C_1 \ones, \quad 0 \leq \alpha_{\mathcal{S}_2} \leq C_2 \ones,
+\end{array}
+\label{eq:svm:dual}
+\end{equation}
+where $\tilde X \in \reals^{n \times n} = \diag(y) X$, $\alpha_{\mathcal{S}}$ means selecting only the indices of $\alpha$ that are in the set $\mathcal{S}$, and the $\ones$'s here are vectors (of the appropriate and possibly different sizes) containing only ones.
+\item[(iv, 2pts)] Give an expression for the optimal $\beta$ in terms of the optimal $\alpha$ variables.  Explain why, using just a couple sentences, the optimal $\beta$ can be thought of as ``cost-sensitive''.
+\item[(v, 1pt)] What kind of problem class are both \eqref{eq:svm:primal} and \eqref{eq:svm:dual}?  You may choose none, one, or more than one of the following:
+\begin{itemize}
+\item linear program
+\item quadratic program
+\item second-order cone program
+\item semidefinite program
+\item cone program
+\end{itemize}
+\end{enumerate}
+
+\begin{proof}
+\begin{enumerate}[(i)]
+\item Yes, since Slater's conditions hold here.
+\item The KKT conditions are:
+    \[  \left \{ \begin{array}{cc}
+        \beta = \sum \alpha_i y_ix_i; \sum \alpha_i y_i=0;\left( \begin{array}{c}
+            \alpha_{\mathcal{S}_1} \\
+            \alpha_{\mathcal{S}_2} \end{array}\right)=\left( \begin{array}{c}
+                C_1 1\\
+                C_2 1 \end{array}\right )-u &  \text{(stationarity)}\\
+     u_i\xi_i=0; \alpha_i(1-\xi_i-y_i(x_i^T\beta +\beta_0))=0 &\text{(complementary slackness)} \\
+     \xi_i \geq 0; y_i(x_i^T\beta +\beta_0)\geq 1-\xi_i & \text{(primal feasibility)}\\
+    u_i\geq 0, \alpha_i\geq 0 &\text{(dual feasibility)}
+       \end{array} \right. \]
+\item Let \[L(\beta,\beta_0,\xi,\alpha,u)=\frac{1}{2}| \beta \|_2^2 + C_1 \sum_{i \in \mathcal{S}_1} \xi_i + C_2    \sum_{i \in \mathcal{S}_2} \xi_i +\sum \alpha_i(1-\xi_i-y_i(x_i^T\beta+\beta_0))+\sum u_i\xi_i\]
+      then it is straightforward to induce the following dual problem. 
+      \begin{equation*}
+      \begin{array}{ll}
+      \maximizewrt{\alpha \in \reals^n} & -(1/2) \alpha \tilde X \tilde X^T \alpha + \ones^T \alpha \\
+      \subjectto & y^T \alpha = 0, \quad 0 \leq \alpha_{\mathcal{S}_1} \leq C_1 \ones, \quad 0 \leq \alpha_{\mathcal{S}_2} \leq C_2 \ones,
+     \end{array}
+     \label{eq:svm:dual}
+     \end{equation*}
+\item $$\beta=\sum \alpha_iy_ix_i$$
+      since $\alpha$ is "cost-sensitive", we know that $\beta$ is sensitive correspondingly.
+\item \begin{itemize}
+    \item quadratic program
+    \item second-order cone program
+    \item semidefinite program
+    \item cone program
+     \end{itemize}
+\end{enumerate}
+\end{proof}
+
+
+
+
+\subsection*{Part (b)}
+        \textbf{Please submit your code as an appendix to this problem}.
+\begin{enumerate}
+    \item[(i, 4pts)] Implement the primal SVM in problem~\eqref{eq:svm:primal}  using a
+        standard QP solver, typically available as ``quadprog`` function (for
+        example in Matlab, R or in \texttt{Mathprogbase.jl} in Julia).  Load a
+        small synthetic toy problem with inputs $X \in \mathbb R^{100 \times
+        2}$ and labels $y \in \{-1, 1\}^{100}$ from \texttt{toy.hdf5} (HDF5 file format) and solve the
+        primal SVM with (1) $C_1 = C_2 = 1$, (2) $C_1 = 1, C_2 = 10$ and (3)
+        $C_1 = 10, C_2 = 1$. For each pair of penalty parameters report the
+        objective value of the optimal solution.
+    \item[(ii, 2pts)] For each parameter pair, show a scatter plot of the data
+        and plot the decision border (where the predicted class label changes)
+        as well as the boundaries of the margin (the area in which there is a
+        nonzero penalty for predicting any label) on top.  Also highlight the
+        data points $i$ that lie on the wrong side of the margin, that is,
+        points with $\xi_i > 0$. How and why does the decision boundary change
+        with different penalty parameters?
+    \item[(iii, 2pts)]
+        Looking back at the KKT conditions derived in part (a, ii) and the form
+        of the primal solution in part (a, iv), what can be said about the
+        influence of the data points that lie strictly on the right side of the
+        margin (points $i$ with $y_i (x_i^\top \beta + \beta_0) > 1$)? How
+        would the decision boundary change if we removed these data points from
+        the dataset and recomputed the optimal solution? (Give a qualitative
+        answer, no need to actually implement that)
+    \item[(iv, 3pts)] Implement now the dual SVM in problem~\eqref{eq:svm:dual}  using again a
+        standard QP solver and report the optimal objective value of the dual
+        for the same penalty parameters as in (i). 
+        What can in general be said about the location of a data point $i \in \mathcal S_k$ with respect of the boundary of the margin if
+        \begin{itemize}
+            \item $\alpha_i = 0$;
+            \item $\alpha_i \in (0, C_k)$;
+            \item $\alpha_i = C_k$?
+        \end{itemize}
+        For each pair of penalty parameters, plot the signed distance to the
+        decision boundary of each datapoint $i$ obtained from the primal SVM
+        $y_i(x_i^\top \beta + \beta_0)$ against dual variables $\alpha_i$
+        obtained from the dual SVM.
+    \item[(v, 1pt)]
+        Cost-sensitive SVMs minimize the (regularized) cost-sensitive
+        hinge-loss, a convex upper bound on the weighted classification error.
+        Predict the class labels for each data point (of the same set that the
+        SVM was trained on) and report the total weighted classification error.
+        A datapoint incurs a loss of $C_1$ if the true label is $+1$ and $-1$
+        is predicted and $C_2$ if $+1$ is predicted for a data point with true
+        label $-1$.
+\end{enumerate}
+
+\begin{proof}
+\begin{enumerate}[(i)]
+    \item 
+    \[f_1= 9.6044, \quad f_2 = 30.2652,\quad f_3 = 11.8911\]
+    \item         \begin{figure}[H]
+  \centering
+\includegraphics[width=3.5in]{svm1}
+  \caption[]
+   { $(C1,C2)=(1,1)$}
+\end{figure}
+
+     \begin{figure}[H]
+  \centering
+\includegraphics[width=3.5in]{svm2}
+  \caption[]
+   { $(C1,C2)=(1,10)$}
+\end{figure}
+
+     \begin{figure}[H]
+  \centering
+\includegraphics[width=3.5in]{svm3}
+  \caption[]
+   { $(C1,C2)=(10,1)$}
+\end{figure}
+The decison boundary moves in an opposite direction the class with higher penalty. 
+\item if $y_i(x_i^T\beta+\beta_0)>1$, than by KKT conditions, $\alpha_i$=0, which means the point does not influence the boundary. Therefore, if we remove these points, the decision boundary won't change.
+\item \[f_{dual1}=9.6044,\quad f_{dual2}=30.2652,\quad f_{dual3}=11.8911\]
+   \begin{itemize}
+    \item $\alpha_i=0$, datapoint $i$ is locates on the right side of the boundary of margin.
+    \item $\alpha_i\in (0,C_k)$,  datapoint $i$ locates exactly on the boundary of margin.
+    \item $\alpha_i =C_k$, datapoint $i$ locates on the wrong side of the boundary of margins.
+   \end{itemize}
+ \begin{figure}[H]
+  \centering
+\includegraphics[width=3.5in]{d1}
+  \caption[]
+   { $(C1,C2)=(1,10)$}
+\end{figure}
+
+ \begin{figure}[H]
+  \centering
+\includegraphics[width=3.5in]{d2}
+  \caption[]
+   { $(C1,C2)=(1,10)$}
+\end{figure}
+ \begin{figure}[H]
+  \centering
+\includegraphics[width=3.5in]{d3}
+  \caption[]
+   { $(C1,C2)=(1,10)$}
+\end{figure}
+\item \[error_1= -3,\quad error_2= -16, \quad error_3 = -4\]
+which agrees what we observed in the plots.
+\end{enumerate}
+\end{proof}
+
+\section*{Matlab Code}
+
+\lstinputlisting{svm.m}
+
+\lstinputlisting{svmd.m}
+
+\lstinputlisting{distance.m}
+
+\lstinputlisting{error.m}
+
+\lstinputlisting{svm_main.m}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

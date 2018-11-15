@@ -1,0 +1,584 @@
+\documentclass{article}
+
+\usepackage[left=1.25in,top=1.25in,right=1.25in,bottom=1.25in,head=1.25in]{geometry}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+\usepackage{verbatim,float,url,enumerate}
+\usepackage{graphicx,subfigure,psfrag}
+\usepackage{natbib}
+\usepackage{environ}
+\usepackage{hyperref}
+\usepackage{pifont}       
+
+\newtheorem{algorithm}{Algorithm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\newcommand{\argmin}{\mathop{\mathrm{argmin}}}
+\newcommand{\argmax}{\mathop{\mathrm{argmax}}}
+\newcommand{\minimize}{\mathop{\mathrm{minimize}}}
+\newcommand{\maximize}{\mathop{\mathrm{maximize}}}
+\newcommand{\st}{\mathop{\mathrm{subject\,\,to}}}
+\newcommand{\dist}{\mathop{\mathrm{dist}}}
+
+\newcommand{\reals}{\mathbb R}
+\newcommand{\prox}{\operatorname{prox}}
+\newcommand{\dom}{\operatorname{dom}}
+\def\R{\mathbb{R}}
+\def\E{\mathbb{E}}
+\def\P{\mathbb{P}}
+\def\Cov{\mathrm{Cov}}
+\def\Var{\mathrm{Var}}
+\def\half{\frac{1}{2}}
+\def\sign{\mathrm{sign}}
+\def\supp{\mathrm{supp}}
+\def\th{\mathrm{th}}
+\def\tr{\mathrm{tr}}
+\def\dim{\mathrm{dim}}
+\def\hbeta{\hat{\beta}}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+
+\begin{document}
+
+\lstset{language=Matlab,%
+    %basicstyle=\color{red},
+    breaklines=true,%
+    morekeywords={matlab2tikz},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=9pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+    %emph=[2]{word1,word2}, emphstyle=[2]{style},    
+}
+
+
+
+\title{Homework 2}
+\author{\Large Convex Optimization 10-725/36-725}
+\date{{\bf Due Friday September 30 at 5:30pm \\
+submitted to Christoph Dann in Gates 8013} \\
+(Remember to a submit separate writeup for each \\ 
+problem, with your name at the top) \\
+\bigskip Total: 75 points}
+\maketitle
+
+
+\section{Subgradients and Proximal Operators (16 pts) [Han]}
+
+\begin{enumerate}[(a)]
+    \item   Recall that subgradient can be viewed as a generalization of gradient for general functions. Let $f$ be a function from $\R^n$ to $\R$. The subdifferential of $f$ at $x$ is defined as $\partial f(x) = \{g\in\R^n: g\text{ is a subgradient of $f$ at $x$}\}$.
+        \begin{enumerate}
+            \item[(i, 2 pts)]  Show that $\partial f(x)$ is a convex and closed set. 
+
+            \item[(ii, 2 pts)]Let $f(x) = ||x||_2$. Show that 
+            $$
+            \partial f(x) = \begin{cases}
+            \{x / ||x||_2\}, & x\neq 0 \\
+            \{z: ||z||_2\leq 1\}, & x = 0
+            \end{cases}
+            $$
+
+            \item[(iii, 2 pts)] More generally, let $p, q > 0$ such that $\frac{1}{p} + \frac{1}{q} = 1$. Consider function $f(x) = ||x||_p$, where $||x||_p$ is defined as:
+            $$||x||_p = \max_{||z||_q \leq 1} z^T x$$
+            Based on the definition of $||x||_p$, show that $\forall x, y$:
+            $$x^Ty\leq ||x||_p||y||_q$$
+            The above inequality is known as H\"{o}lder's inequality.
+
+            \item [(iv, 2 pts)] Use H\"{o}lder's inequality to show
+              that $\partial f(x) = \argmax_{||z||_q \leq 1} z^T
+              x$. (You are not allowed to use the rule for the
+              subdifferential of a max of functions for this problem.) 
+        \end{enumerate}
+
+    \item   The proximal operator for function $h: \R^n\mapsto\R$ and $t > 0$ is defined as:
+            $$\prox_{h,t}(x) = \argmin_{z}\frac{1}{2}||z-x||_2^2 + th(z)$$
+            Compute the proximal operators $\prox_{h,t}(x)$ for the following functions.
+
+            \begin{enumerate}
+                \item[(i, 2 pts)]  $h(z) = \frac{1}{2}z^TAz + b^Tz + c$, where $A\in\mathbb{S}_+^n$.
+
+                \item[(ii, 2 pts)]  $h(z) = -\sum_{i=1}^n \log z_i$, where $z\in\R_{++}^n$.
+
+                \item[(iii, 2 pts)] $h(z) = ||z||_2$.
+
+                \item[(iv, 2 pts)] $h(z) = ||z||_0$, where $||z||_0$ is defined as $||z||_0 = |\{z_i: z_i \neq 0, i = 1,\ldots, n\}|$.
+            \end{enumerate}
+\end{enumerate}
+\begin{proof}
+\begin{enumerate}[(a)]
+    \item 
+    \begin{enumerate}[(i)]
+        \item   
+        \begin{equation*}
+        \begin{split}
+        f(y)&=tf(y)+(1-t)f(y)\\
+        &\geq t[f(x)+g_1^T(y-x)]+(1-t)[f(x)+g_2^T(y-x)]\\
+        &=f(x)+[tg_1+(1-t_2)g_2]^T(y-x)
+        \end{split}
+        \end{equation*}
+    Thus, $\partial f(x)$ is a convex set.
+    
+    Let $g \notin \partial f(x)$, then $\exists y$, such that $f(y)<f(x)+g^T(y-x)$. Therefore $\forall g'\in \{||g-g'||<\frac{|f(x)-f(y)|}{2||(y-x)||}\}$, we obtain $f(y)<f(x)+{g'}^T(y-x)$, which implies $\partial f(x)$ is closed.
+    
+    \item when $x\neq 0$, $f(x)$ is differentiable, so $\partial f(x)= \{\nabla f(x)\} = \{x/||x||_2\}$. if $x=0$, for any $z$, $||z||\leq 1$ \[||y||\geq z^Ty=||0||+z^T(y-0)\]
+    and for any $z$ that $||z||>1$, let $y = z$, $||y||_2<z^Ty$. So we obtain
+     $$
+            \partial f(x) = \begin{cases}
+            \{x / ||x||_2\}, & x\neq 0 \\
+            \{z: ||z||_2\leq 1\}, & x = 0
+            \end{cases}
+            $$
+ 
+    \item \[  x^T \frac{y}{||y||_q} \leq \max_{||z||_q \leq 1} z^Tx  = ||x||_p\]
+    \item for any $z\in \{z:z^Tx=||x||_p\}$, 
+    \[||x||_p+z^T(y-x) = z^Ty\leq ||z||_q||y|_p=||y||_p\]
+                
+ 
+    \end{enumerate} 
+    \item 
+  \begin{enumerate}[(i)]
+    \item $\prox_{h,t}(x)=(1+tA)^{-1}(x-b)$
+    \item $\prox_{h,t}(x)=z$, where $z_i=\frac{x_i+\sqrt{xi^2+4}}{2}$, $i=1\cdots n$
+    \item $$\prox_{h,t}=\begin{cases}
+    (1-\frac{t}{||x||_2})x, & ||x||_2>t\\
+    0, & other~wise
+    \end{cases}$$
+    \item $$\prox_{h,t}=\begin{cases}
+    x_i, & \frac{1}{2}x_i^2>1\\
+    0, & other~wise
+    \end{cases}$$
+ \end{enumerate}   
+ \end{enumerate}   
+\end{proof}
+
+
+
+\section{Properties of Proximal Mappings and Subgradients (16 points) [Christoph]}
+\begin{enumerate}
+    \item[(a, 3pts)] Prove one direction of the finite pointwise maximum rule for subdifferentials: The subdifferential of $f(x) = \max_{i=1,\dots, n} f_i(x)$ satisfies
+        \begin{align}
+            \partial f(x) \supseteq \operatorname{conv}\left( \bigcup_{i : f_i(x) = f(x)} \partial f_i(x)  \right).
+        \end{align}
+        (Bonus: prove the other direction.)
+    \item[(b, 3pts)] Show that if $f: \reals^n \rightarrow \reals$ is a convex function the following property holds
+        \begin{align}
+            (x-y)^\top (u - v) \geq 0 \qquad \forall x,y \in \reals^n, u \in \partial f(x), v \in \partial f(y). 
+        \end{align}
+    \item[(c, 3pts)] Let $f(x) = \mathbb E[g(x, Y)] = \int g(x, y) p(y) dy$ be the expectation of a
+random function $g$ that takes as input a fix $x$ and a random variable $Y$.
+Let $h(x, y)$ be a function such that for every $y$ it holds that $h(x, y)$ is
+a subgradient of $g( \cdot, y)$ at $x$,  that is $h(x,y) \in \partial_x g(x,
+y)$. Show that $\int h(x,y) p(y) dy \in \partial f(x)$.
+    \item[(d, 3pts)] Recall the definition of the proximal mapping: For a function $h$, the proximal mapping $\prox_t$ is defined as
+\begin{align}
+    \prox_t(x) = \argmin_{u} \frac{1}{2t} \| x-u\|_2^2 + h(u).
+\end{align}
+ Show that $\prox_t(x) = u \Leftrightarrow h(y) \geq h(u) + \frac 1 t (x - u)^\top (y - u) \quad \forall y$.
+    \item[(e, 4pts)] Prove that the $\prox_t$ mapping is non-expansive, that is, 
+        \begin{align}
+        \| \prox_t(x) - \prox_t(y) \|_2 \leq \| x - y\|_2 \quad \forall x, y.
+        \end{align}
+
+\end{enumerate}
+
+\begin{proof}
+\begin{enumerate}[(a)]
+    \item suppose $f_i(x)=f(x)$, $g\in \partial f_i(x)$, then
+    \[ f(y)\geq f_i(y) \geq f_i(x)+g^T(y-x)=f(x)+g^T(y-x) \]
+    \item \[ \left.\begin{array}{rcl}
+    f(y)\geq f(x)+u^T(y-x)\\
+    f(x)\geq f(y)+v^T(x-y)
+        \end{array}\right \} \Rightarrow (x-y)^T(u-v)
+        \]
+        \item 
+        \begin{eqnarray*}     
+         h(z,y)\in \partial_xg(x,y)
+     & \Rightarrow & g(z,y)\geq g(x,y)+h(x,y)(z-x) \\
+         & \Rightarrow & \int g(z,y)p(y)dy\geq \int g(x,y)p(y)dy+\int h(x,y)(z-x)p(y)dy\\
+          &  \Rightarrow & f(z)\geq f(x)+\int h(x,y)p(y)dy(z-x)\\
+          & \Rightarrow & \int h(x,y)p(y)dy \in \partial f(x)
+        \end{eqnarray*}
+     \item \begin{eqnarray*}
+         \prox_t(x)=u & \iff  &\frac{1}{2}||x-y||_2^2+h(y)\geq \frac{1}{2}||x-u||+h(u), \quad \forall y\\
+         & \iff  & h(y)\geq h(u)+\frac{1}{t}(x-u)^T(y-u), \quad \forall y
+         \end{eqnarray*}
+  \item $\forall x,y$, by (d), we have the following inequalities:
+  \[ \left.\begin{array}{rcl}
+  h(\prox_t(y))\geq h(\prox_t(x))+\frac{1}{t}(\prox_t(x)-x)^T(\prox_t(y)-x)\\
+   h(\prox_t(x))\geq h(\prox_t(y))+\frac{1}{t}(\prox_t(y)-y)^T(\prox_t(x)-y)
+   \end{array} \right \}\Rightarrow   \| \prox_t(x) - \prox_t(y) \|_2 \leq \| x - y\|_2  \] 
+\end{enumerate}
+
+
+
+\end{proof}
+
+
+
+
+
+
+
+\section{Convergence Rate for Proximal Gradient Descent (20 points) [Alnur]}
+In this problem, you will show that the convergence rate for proximal gradient descent (also known as the proximal gradient method) is $O(1/k)$, where $k \geq 1$ is the number of iterations that the algorithm is run for, which was also presented in class.  As a reminder, the setup for proximal gradient descent is as follows.  We assume that the objective $f(x)$ can be written as $f(x) = g(x) + h(x)$ (more details on these functions are given below); then, we compute the iterates
+\begin{equation}
+x^{(i)} = \textrm{prox}_{t_i h} \left( x^{(i-1)} - t_i \nabla g(x^{(i-1)}) \right), \label{eq:q3:1}
+\end{equation}
+where $i \geq 1$ is an iteration counter, $x^{(0)}$ is the initial point, and the $t_i > 0$ are step sizes (chosen appropriately, during iteration $i$).
+
+To be clear, we are assuming the following conditions here.
+\begin{enumerate}
+\item[(A1)] $g$ is convex, differentiable, and $\dom(g) = \reals^n$.
+\item[(A2)] $\nabla g$ is Lipschitz, with constant $L > 0$.
+\item[(A3)] $h$ is convex, not necessarily differentiable, and we take $\dom(h) = \reals^n$ for simplicity.
+\item[(A4)] The step sizes $t_i$ are either taken to be constant, i.e., $t_i = t = 1 / L$, or chosen by backtracking line search; either way, the following inequality holds:
+\begin{equation}
+g(x^{(i)}) \leq g(x^{(i-1)}) - t \nabla g(x^{(i-1)})^T G_{t}(x^{(i-1)}) + (t / 2) \| G_{t}(x^{(i-1)}) \|_2^2, \label{eq:q3:2}
+\end{equation}
+where $t$ is the step size at any iteration of the algorithm, and we define 
+\[
+G_{t}(x^{(i-1)}) = (1/t) \left( x^{(i-1)} - x^{(i)} \right).
+\]
+(In case you are wondering, this inequality follows from assumption (A2), but you can just take it to be true for this problem.)
+\end{enumerate}
+
+Now, finally, for the problem.  Assume, for all parts of this problem except the last one, that the step size is fixed, i.e., $t_i = t = 1/L$.
+\begin{enumerate}
+\item[(a, 2pts)] Show that
+\[
+s = G_{t}(x^{(i-1)}) - \nabla g(x^{(i-1)})
+\]
+is a subgradient of $h$ evaluated at $x^{(i)}$.  (As a reminder, $h$ is the potentially nondifferentiable function in our decomposition of the objective $f$; see above for details.)
+
+(Hint:  Look back at what you did in Q2 part (d).)
+
+\item[(b, 4pts)] Derive the following (helpful) inequality:
+\[
+f(x^{(i)}) \leq f(z) + G_t(x^{(i-1)})^T (x^{(i-1)} - z) - (t/2) \| G_t(x^{(i-1)}) \|_2^2, \quad z \in \reals^n.
+\]
+
+\item[(c, 4pts)] Show that the sequence of objective function evaluations $\{ f(x^{(i)}) \}, \; i=0,\ldots,k$, is nonincreasing (don't worry about the case when $x^{(i)}$ is a minimizer of $f$).  (By the way, this result basically says that proximal gradient descent is a ``descent method''.)
+
+\item[(d, 4pts)] Derive the following (helpful) inequality:
+\[
+f(x^{(i)}) - f(x^*) \leq \frac{1}{2t} \left( \| x^{(i-1)} - x^* \|_2^2 - \| x^{(i)} - x^* \|_2^2 \right),
+\]
+where $x^*$ is a minimizer of $f$ (we assume $f(x^*)$ is finite).  (By the way, this result, taken together with what you showed in part (c), implies that we move closer to the optimal point(s) on each iteration of proximal gradient descent.)
+
+\item[(e, 4pts)] Now, show that after $k$ iterations, the accuracy that proximal gradient descent (with a fixed step size of $1/L$) obtains is $O(1/k)$, i.e., 
+\[
+f(x^{(k)}) - f(x^*) \leq \frac{1}{2 k t} \| x^{(0)} - x^* \|_2^2;
+\]
+in other words, the convergence rate for proximal gradient descent is $O(1/k)$.  (Put differently, if you desire $\varepsilon$-level accuracy, roughly speaking, then you must run proximal gradient descent for $O(1/\varepsilon)$ iterations.)
+
+\item[(f, 2pts)] Establish the analogous convergence rate result when the step sizes are chosen according to backtracking line search, i.e.,
+\[
+f(x^{(k)}) - f(x^*) \leq \frac{1}{2 k t_{\min}} \| x^{(0)} - x^* \|_2^2,
+\]
+where $t_{\min} = \min_{i=1,\ldots,k} t_i$.
+\end{enumerate}
+
+\begin{proof}
+\begin{enumerate}[(a)]
+    \item by Q2 (d)\begin{eqnarray*}
+    h(Z) &\geq &f(x^{(i)}+\frac{1}{t}[x^{(i)}-x^{(i-1)}-t_i\nabla g(x^{(i-1)})]^T(z-x^{(i)})\\
+     & = & f(x^{(i)}+[G_t(x^{(i-1)}-\nabla g(x^{(i-1)}))]^T(z-x^{(i)})
+    \end{eqnarray*}
+    since $t_i=t$, then it implies $s=G_t(x^{(i-1)})-\nabla g(x^{(i-1)})$ is a subgradient of $h$ evaluated at $x^{(i}$.
+    \item combining the following 3 results:
+    \begin{itemize}
+            \item $f = g +h$
+        \item $g(x^{(i)}) \leq g(x^{(i-1)}) - t \nabla g(x^{(i-1)})^T G_{t}(x^{(i-1)}) + (t / 2) \| G_{t}(x^{(i-1)}) \|_2^2$
+        \item $g(z)\leq g(x^{(i-1)}) + \nabla g(x^{(i-1)})^T(z-x)$\end{itemize}
+   We will obtain
+   \[
+f(x^{(i)}) \leq f(z) + G_t(x^{(i-1)})^T (x^{(i-1)} - z) - (t/2) \| G_t(x^{(i-1)}) \|_2^2, \quad z \in \reals^n.
+\]
+\item let $z=x^{(i-1)}$ in (b), then $$f(x^{(i)})\leq f(x^{(i-1)})-t/2||G_t(x^{(i-1)})||_2^2\leq f(x^{(i-1)}) $$
+So $f(x^{(i-1)})$ is nonincreasing, which says that proximal gradient descent is a "descent method".
+\item Let $z=x^*$ in (b)
+\[f(x^{(i-1)})-f(x^*)\leq G_t(x^{(i-1)})(x^{(i-1)}-x^*)-t/2||G_t(x^{(i-1)})||_2^2=\frac{1}{2t} \left( \| x^{(i-1)} - x^* \|_2^2 - \| x^{(i)} - x^* \|_2^2 \right)\]
+\item \[
+\begin{split} f(x^{(k)})-f(x^*)& \leq \frac{1}{k}\sum_{i=1}^k [f(x^{(i)})-f(x^*)]\\
+&\leq \frac{1}{2kt}\sum_k\left( \| x^{(i-1)} - x^* \|_2^2 - \| x^{(i)} - x^* \|_2^2 \right) \\
+& = \frac{1}{2kt}||x(0)-x^*||_2^2
+\end{split}\]
+\item replace $t$ by $ t_{min} $ in (d), similar to (e), we will have
+\[
+f(x^{(k)}) - f(x^*) \leq \frac{1}{2 k t_{\min}} \| x^{(0)} - x^* \|_2^2,
+\]
+
+\end{enumerate}
+
+
+\end{proof}
+
+
+
+\section{Proximal Gradient Descent for Group Lasso (23 points) [Justin \& Mariya]}
+Suppose predictors (columns of the design matrix $X\in\R^{n \times (p+1)}$) in a
+regression problem split up into $J$ groups:
+\begin{equation}
+X = \left[ \mathbf{1}\; X_{(1)} \; X_{(2)} \; \dots \;X_{(J)} \right]
+\end{equation}
+where $\mathbf{1} = (1\; 1 \; \cdots \;1) \in \mathbb{R}^n$. To
+achieve sparsity over non-overlapping groups rather than individual 
+predictors, we may write $\beta = (\beta_0, \beta_{(1)}, \dots,
+\beta_{(J)})$, where $\beta_0$ is an intercept term and each
+$\beta_{(j)}$ is an appropriate coefficient block of $\beta$
+corresponding to $X_{(j)}$, and solve the group lasso problem:
+\begin{equation}
+\label{eq:group_lasso}
+  \min_{\beta \in \mathbb{R}^{p+1}} \; 
+g(\beta) + \lambda \sum_{j=1}^J w_j \|\beta_{(j)}\|_2
+\end{equation}
+A common choice for weights on
+groups $w_j$ is $\sqrt{p_j}$, where $p_j$ is number of predictors that
+belong to the $j$th group, to adjust for the group sizes.  
+
+\begin{enumerate}[(a)]
+
+\item (3 pts) Derive the proximal operator $\text{prox}_{h,t}(x)$ for the
+  nonsmooth component $h(\beta) = \lambda \sum_{j=1}^J w_j
+  \|\beta_{(j)}\|_2$.
+
+\item (10 pts) Download the birthweight data set \texttt{birthwt.zip}
+  from the course website. This data contains 189
+  observations, 16 predictors (in \texttt{X.csv}), and an outcome, birthweight
+  (in \texttt{y.csv}). The data were collected at Baystate Medical Center,
+  Springfield, Mass during 1986. The 16 columns in the predictor matrix have
+  groupings according to their names (e.g. \texttt{mygroupname3}), and each
+  represent the following:
+  \begin{itemize}
+  \item \texttt{age1,age2,age3}: Orthogonal polynomials of first, second, and third degree
+    representing mother’s age in years
+  \item \texttt{lwt1,lwt2,lwt3}: Orthogonal polynomials of first, second, and third degree
+    representing mother’s weight in pounds at last menstrual period
+  \item \texttt{white,black}: Indicator functions for mother’s race; "other" is reference
+    group.
+  \item \texttt{smoke}: Smoking status during pregnancy
+  \item \texttt{ptl1,ptl2m}: Indicator functions for one or for two or more
+    previous premature labors, respectively.  No previous premature labors is
+    the reference category.
+  \item \texttt{ht}: History of hypertension
+  \item \texttt{ui}: Presence of uterine irritability
+  \item \texttt{ftv1,ftv2,ftv3m}: Indicator functions for one, for two, or for
+    three or more physician visits during the first trimester, respectively. No
+    visits is the reference category. 
+  \end{itemize}
+
+  {\Large \ding{45}} \textit{Did you know?} A reference category/group is the
+  \textit{baseline} level in categorical data when it is coded as dummy
+  variables. For instance, if a categorical variable has 3 levels (say, three
+  drugs administered to patients), then a baseline category may be the first
+  drug, and two dummy variables may be created each with $i$th entry is coded
+  as 1 if the $i$th person was treated with that drug. Why do this? This allows
+  for the model's fitted coefficient for the dummy variables measure the average
+  difference between the response level between the second or third category and
+  the first category (adjusting for the effect of all other variables).
+
+  \begin{enumerate}[(i)]
+
+  \item Let $g(\beta)=\|y-X\beta\|_2^2$, in which case the problem 
+    above is called the least squares group lasso problem.  Derive the
+    gradient of $g$ in this case.
+
+  \item Use proximal gradient descent on the least squares group lasso
+    problem on with the birthweight data set. Set $\lambda=4$, using 
+    a fixed step size $t=0.002$ and $5000$ steps. 
+
+    Now, implement accelerated proximal gradient descent with fixed step
+    size. Use the same $\lambda$, $t$, and number of iterations as before.
+
+
+    For both methods, plot $f^{(k)}-f^\star$ versus $k$ (i.e., 
+    $f^{(k)}-f^\star$ is on the y-axis in log scale, and $k$ on the x-axis), where 
+    $f^{(k)}$ denotes the objective value at iteration $k$, and the
+    optimal objective value is $f^\star = 83.6155$. 
+
+  \item Print the components of the solutions numerically from the two methods
+    in part (ii) to see that they are close. What are the selected groups?
+
+  \item Now implement the lasso (hint: you shouldn't have to do any
+    additional coding), with fixed step size with $\lambda = 0.35$,
+    and compare the lasso solution with your group lasso solutions.
+  \end{enumerate}
+
+\item (10 pts) In this problem, we'll use logistic group lasso to classify a
+  person's age group from his movie ratings. The movie ratings can be
+  categorized into groups according to a movie's genre (e.g. all ratings for
+  action movies can be grouped together). Our data does not contain ratings for
+  movies from multiple genre (i.e. has no overlapping groups). Similarly to part
+  (b), we'll use proximal gradient descent to solve the group lasso problem.
+
+  We formulate the problem as a binary classification with output label
+  $y \in \{0,1\}$, corresponding to whether a person's age is under $40$, and
+  input features $X \in \mathbb{R}^{n \times p}$. We model each $y_i|x_i$
+  with the probabilistic model
+  \[
+    \log\left(\frac{p_{\beta}(y_i = 1|x_i)}{1-p_{\beta}(y =
+        1|x_i)}\right) = (X\beta)_i,
+  \]
+  $i=1,\ldots,n$.
+  The logistic group lasso estimator is given by solving the
+  minimization problem in \eqref{eq:group_lasso} with
+  \[
+    g(\beta) = -\sum_{i=1}^{n}y_i(X\beta)_i + \sum_{i=1}^{n}\log(1 +
+    \exp\{(X\beta)_i\}),
+  \]
+  the negative log-likelihood under the logistic probability model.  
+
+  \begin{enumerate}[(i)]
+  \item Derive the gradient of $g$ in this case.
+
+  \item Implement proximal gradient descent to solve the logistic group lasso
+    problem. Fit the model parameters on the training data
+    (\texttt{moviesTrain.mat} available on the class website). The features have
+    already been arranged into groups and you can find information about the
+    labels of each group in \texttt{moviesGroups.mat}. Use regularization
+    parameter $\lambda = 5$ for $1000$ iterations with fixed step size
+    $t = 10^{-4}$.
+
+    Now, implement accelerated proximal gradient descent with fixed step
+    size. Use the same $\lambda$, $t$, and number of iterations as before.
+
+    Lastly, implement proximal gradient descent with backtracking line search
+    (and no acceleration). Here you can set the step-size shrinking parameter
+    $\beta$ to $0.1$. Use the same $\lambda$ as before, but only $400$ outer
+    iterations.
+
+    For each of the three methods, plot $f^{(k)}-f^\star$ versus $k$,
+    where $f^{(k)}$ denotes the objective value at iteration $k$, and
+    now the optimal objective value is $f^\star = 336.207$ on a semi-log scale (i.e. where the y-axis is in log scale). For
+    backtracking line search, count the inner iterations towards the
+    iteration number, in order to make a fair comparison. 
+
+  \item Finally, we will use the accelerated proximal gradient descent from part
+    $(ii)$ to make predictions on the test set, available in
+    \texttt{moviesTest.mat}. What is the classification error? What movie genre
+    are important for classifying whether a viewer is under $40$ years old?
+  \end{enumerate}
+
+\end{enumerate}
+
+
+\begin{proof}
+\begin{enumerate}[(a)]
+    \item \begin{equation*}
+      \beta_j=\begin{cases}
+          (1-\frac{\lambda w_i t}{||x_j||_2})x_j,& ||x_j||_2\leq \lambda w_i t\\
+          0, & other~wise
+        \end{cases}\end{equation*}
+        \item \begin{enumerate}[(i)]
+            \item $2X^T(X^\beta-Y)$
+
+            \item plot of error vs. iteration 
+            \begin{figure}[H]
+  \centering
+\includegraphics[width=4in]{pgd}
+  \caption[]
+   { pdg, apdg, lasso}
+\end{figure}
+\item  
+
+\textbf{pdg}: 3.0183,
+         0,
+         0,
+         0,
+         0,
+         0,
+         0,
+    0.3034,
+   -0.0542,
+   -0.2888,
+   -0.2250,
+    0.0343,
+   -0.2748,
+   -0.4581,
+    0.0230,
+    0.0026,
+   -0.0092
+
+\textbf{apdg}: 3.0183,
+         0,
+         0,
+         0,
+         0,
+         0,
+         0,
+    0.3034,
+   -0.0542,
+   -0.2888,
+   -0.2250,
+    0.0343,
+   -0.2748,
+   -0.4581,
+    0.0230,
+    0.0026,
+   -0.0092
+
+\textbf{lasso}: 2.9437,
+         0,
+         0,
+         0,
+         0,
+         0,
+         0,
+         0,
+         0,
+         0,
+         0,
+         0,
+         0,
+         0,
+         0,
+         0,
+         0
+
+The solutions from the two methods are close,  group 1 and 2 are not selected. As expected, the convergence rate of accelerate proximal gradient method is much faster than proxiaml gradient method.
+\item  For lasso, only intercept term is selected, which is more sparse than the solutions of other two methods. And its convergence rate is much faster too.
+\end{enumerate}
+\item 
+\begin{enumerate}[(i)]
+    \item \[\nabla g = -\sum_i^n\{ y_iX_i+\frac{\exp)(X_i^T\beta)}{\exp(1+X_i^T\beta)}X_i\}\]
+    \item \begin{figure}[H]
+  \centering
+\includegraphics[width=4in]{c}
+  \caption[]
+   { pdg, apdg, backtracking}
+\end{figure}
+\item error rate is 0.2254, The first most important movie genre for classifying whether a viewer is under 40 years old are 
+    'Comedy', 'Sci-Fi', 'Drama',  'Adventure'.
+\end{enumerate}
+\end{enumerate}
+
+\end{proof}
+
+
+\section*{Matlab Code}
+
+\lstinputlisting{pgdGroupLasso.m}
+
+\lstinputlisting{pgd2.m}
+
+\lstinputlisting{backtracking.m}
+
+\lstinputlisting{hw2.m}
+
+
+\end{document}

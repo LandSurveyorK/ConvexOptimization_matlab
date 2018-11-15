@@ -1,0 +1,286 @@
+%% It is just an empty TeX file.
+%% Write your code here.
+%% 
+
+\documentclass{article}     % Specifies the document class
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{remark}{Remark}
+\usepackage{enumerate}
+\usepackage{float}
+
+
+                             % The preamble begins here.
+\title{Problem Sheet 5}  % Declares the document's title.
+\author{WEI PENG}      % Declares the author's name.
+\date{\today}      % Deleting this command produces today's date.
+
+\newcommand{\ip}[2]{(#1, #2)}
+                             % Defines \ip{arg1}{arg2} to mean
+                             % (arg1, arg2).
+
+%\newcommand{\ip}[2]{\langle #1 | #2\rangle}
+                             % This is an alternative definition of
+                             % \ip that is commented out.
+
+\begin{document}           % End of preamble and beginning of text.
+\maketitle                   % Produces the title.
+
+\emph{You are incourage to discuss with your classmates whenever you find it helpful}
+
+\noindent
+\textbf{Probelm 1}. Let $M\in \mathcal{M}_0^{loc}$ be a continuous local martingale vanishing at 0.
+
+\begin{enumerate}[(1)]
+    \item Recall that $H_0^2$ is the space of $L^2$-bounded continuous martingales vanishing at $t=0$. Show that $M\in H_0^2$ if and only if $\mathbb{E}[\langle M \rangle_{\infty}]<\infty$, where $\langle M \rangle_{\infty}= \lim_{t\rightarrow 0} \langle M_t \rangle$.
+    \item Show that $\langle M \rangle_t$ is deterministic (i.e. there exista a function $f:[0,\infty)\rightarrow \mathbb{R}^1$, such that with probability one, $\langle M \rangle  (\omega)=f(t)$ for all $t\geq 0$) if and only if $M_t$ is a Gaussian martingale, in the sense that it is a martingale and $(M_{t_1},M_{t_2},\cdots, M_{t_n})$ is Gaussian distributed in $\mathbb{R}^n$ for every $0\leq t_1<\cdots < t_n$. In this case, $M_t$ has independent increments.
+    \item Show that there exists a mesasurable set $\widetilde{\Omega}\in \mathcal{F}$, such that $\mathbb{P}(\Omega)=1$ and 
+    \[\widetilde{\Omega}\bigcap \{\langle M \rangle_{\infty}<\infty\} = \widetilde{\Omega}\bigcap \{\lim_{t\rightarrow \infty} M_t \text{exists finitely}\}\]
+    \[\widetilde{\Omega}\bigcap \{\langle M \rangle _{\infty}=\infty\} = \widetilde{\Omega}\bigcap \{ \lim_{t\rightarrow \infty}\sup M_t =\infty, \lim_{t\rightarrow \infty}\inf M_t = - \infty\} \]
+
+\end{enumerate}
+
+\begin{proof}
+\begin{enumerate}[(1)]
+    \item "$\Rightarrow$": $M \in H_0^2 \Rightarrow M_t \rightarrow M_{\infty}$ $ a.s. {\&} L^2$. since $M_t^2 - \langle M \rangle_t $ is a martingle, so $E[\langle M \rangle_{\infty} ] = \lim_{ t \rightarrow \infty} E[\langle M \rangle_t]=\lim_{t \rightarrow \infty} E[M^2_t]= E[M^2_{\infty}]<\infty $.
+    
+        "$\Leftarrow$": by B.D.G. $E[(M_{\infty}^*)^2]\leq CE[(\langle M \rangle_{\infty})]$) which implies that $M_t$ is $L^2$ bounded.  Let $\tau_n$ be the stopping time, $E[X_t\wedge\tau_n|\mathcal{F}_s]=X_s\wedge\tau_n$, since $ |M_{t\wedge {\tau_n}}| < M^*$, $E[M^*]<\infty$, the dominated convergence theorem yields $E[X_t|\mathcal{F}_s]=X_s$.
+        
+        \item "$\Rightarrow$": since $M \in \mathcal{M}_0^{loc}$, there exsit a $\{\widetilde{\mathcal{F}}_t\}-$Brownian motion  $B_t = M_{C_t}+ \int_0^{t} 1_{(\langle M\rangle, \infty)}\,d\widetilde{\beta}_s$. and $B_{\langle M \rangle_t} = M_t$. Since $\langle M \rangle$ is deterministic, and $M_t$, $\widetilde{\beta}$ are independent, thus $M_{C_t}$ is a martingale w.r.t the original filtration $\{\mathcal{F}_t\}$. $B_{\langle M \rangle_t} = M_{C_{\langle M \rangle_t}}= M_t$, which implies $M_t$ is a martingale, and  
+        \[(M_{t_1},M_{t_2}-M_{t_1},\cdots, M_{t_n}-M_{t_{n-1}}) = (B_{f(t_1)}, B_{f(t_2)}-B_{f(t_1)}, \cdots B_{f(t_n)}-B_{f(t_{n-1})})\]
+        Then $M_t$ is a Gaussian martingle.
+        
+        "$\Leftarrow:$" Given $t>0$, $\mathcal{P}_n$: finite partition of $[0,t]$, $mesh (\mathcal{P}_n)\rightarrow 0$, then
+         
+       \[\sum_k (M_{t_k}-M_{t_{k-1}})^2\rightarrow \langle M \rangle_t,\quad in~prob\]
+       It is sufficient to prove that $\sum_k (M_{t_k}-M_{t_{k-1}})^2\rightarrow Const$, in distribution. (???characteristic function)
+       
+        \item since $B_{\langle M \rangle } = M_t$ , a.s. and $P(\limsup_{t \rightarrow \infty} B_t = \infty$, $\liminf_{t \rightarrow \infty} B_t =- \infty)= 1$. thus the two statments can be validated immediately.
+\end{enumerate}
+\end{proof}
+
+
+\noindent
+\textbf{Probelm 2}. Let $B_t$ be the three dimensional Brownian motion iwth $\{\mathcal{F}^B_T\}$ being its augmental natural filtration. Define $X_t \triangleq 1/|B_{1+t}|$.
+\begin{enumerate}
+    \item Show that $X_t$ is a continuous $\{\mathcal{F}^B_{1+t}\}$-local martingale which is uniformly bounded in $L^2$(and hence uniformly integrable) but it is not an $\{\mathcal{F}^B_{1+t}\}$-martingale.
+    \item Show that if a uniformly integrable continuous submartingle $Y_t$ has Doob-Mayer decomposition, it has to be of class (D) in the sense that $\{Y_{\tau}:\tau \text{is a finite stopping time}\}$ is uniformly integrable. By showing that $X_t$ is not of class (D), conclude that $X_t$ dose not have a Doob-Mayer decomposition.
+\end{enumerate}
+\begin{proof}
+\begin{enumerate}[(1)]
+    \item by Ito formula, 
+     \[X_t = X_0 - \sum_{i=1}^3\int_0^t B^i_{1+s}|B_{1+s}|^{-\frac{3}{2}}\,d B^i_s\]
+     so $X_t$ is a local martingale.
+    \begin{eqnarray*}
+        E[X_t^2] &=& \int \frac{1}{x_1^2+x_2^2+x_3^2}(2\pi (1+t))^{-\frac{3}{2}}\exp\{-\frac{x_1^2+x_2^2+x_3^2}{2(1+t)}\}\,dX\\
+         & = &\frac{C}{1+t} \int \frac{1}{y_1^2+y_2^2+y_3^2}\exp\{-(y_1^2+y_2^2+y_3^2)\}\,dY\\
+         & = &\frac{C}{1-t}\int_0^{\pi}\int_0^{2\pi}\int_0^{\infty}\exp(-r^2)\,drd\phi d\theta \\
+         & = & \frac{C'}{1+t}
+        \end{eqnarray*}
+        so $X_t$ is uniformly bounded in $L^2$.  and hence $X_t$ is U.I. since
+        \[ (\int_{|X_t|>\lambda}|X_t|\,dP)^2\leq E[X_t^2]\cdot P(|X_t|>\lambda)\leq \frac{E[X^2_t]^2}{\lambda^2}\]
+      %%  since \begin{eqnarray*}
+    %%         E[X_t|\mathcal{F}_{1+s}] & = &  E[\frac{1}{|B_{1+t}|}|\mathcal{F}_{1+s}]\\
+    %%                                & \leq  &  1 / E[|B_{1+t}||\mathcal{F}_{1+s}],\quad (\text{Jessen~Inq})\\
+    %%                              & \leq & 1 / |E[B_{1+t}|\mathcal{F}_{1+s}]|\\
+    %%                            & = & 1 / |B_{1+s}|
+    %%                         
+    %%  \end{eqnarray*}
+    since $E[X_t]$ is a function of $\frac{1}{\sqrt{1-t}}$,not constant, $X_t$ is not a martingle.  
+    
+    \item since $Y_t$ is U.I. $Y_t \rightarrow Y_{\infty}$ a.s. ${\&}$ $L^1$, if $Y_t = M_t + A_t$. since
+    $M_{\tau} = E[M_{\infty}|\mathcal{F}_{\tau}]$, we have $M_{\tau}$ is U.I., moreover $A_{\tau}$ is U.I. since $A_{\tau}1_{ A_{\tau}>\lambda }\leq A_\infty1_{A_{\infty}>\lambda}$, thus we obtain that $Y_\tau$ is U.I. Now, we are going to prove the following lemma.
+    \begin{lemma}
+     A local martingale of class D is a martingale.
+     \end{lemma}
+     Let $\tau_n$ be stopping times such that $\tau_n\rightarrow \infty$, a.s. $E[X^{\tau_n}_t|\mathcal{F}_s]= X^{\tau_n}_s$ 
+     \begin{itemize}
+     \item $X^{\tau_n}_s$ is U.I. and $X^{\tau_n}_s\rightarrow X_s$ a.s. implies $X^{\tau_n}_s\rightarrow X_s$, in $L^1$.
+     \item similarly, $X_t^{\tau_n}\rightarrow X_t$ in $L^1$, and since $||E[X^{\tau_n}_t|\mathcal{F}_s]-E[X_t|\mathcal{F}_s]||_1\leq ||X^{\tau_n}_t-X_t||_1$, we have $E[X^{\tau_n}_t|\mathcal{F}_s]\rightarrow X_t$ in $L^1$
+     so $E[X_t|\mathcal{F}_s]= X_s$, that means $X_t$ is a martingale. 
+     \end{itemize}
+     but $X_t$ is not a martingle, so $X_t$ does not have a Doob-Mayer decomposition.
+\end{enumerate}
+\end{proof}
+
+
+
+
+\noindent
+\textbf{Problem 3.} This problem is the stochastic counterpart of Fubini's theorem. 
+\begin{enumerate}
+    \item A set $\Gamma \subset [0,\infty)\times \Omega$ is called progressive if the stochastic process $1_{\Gamma}(t,w)$ is progressively measurable. Show that the family $\mathcal{P}$ of progressive sets form a sub-$\sigma$ algebra of $\mathcal{B}([0,\infty))\otimes \mathcal{F}$, and a stochastic process $X$ is progressively measurable if and only if it is measurable with respect to $\mathcal{P}$.
+    \item Let $\Phi= \{\Phi^a: a\in \mathbb{R}^n\}$ be a family of real valued stochastic processes parameterized by $a\in \mathbb{R}^1$. Viewed as a random variable on $\mathbb{R}^1\times [0,\infty)\times \Omega$, suppose that $\Phi$ is uniformly bounded and $\mathcal{B}(\mathbb{R}^1)\otimes \mathcal{P}$-measurable. Let $X_t$ be a continuous sememartingale. Show that there exists a $\mathcal{B}(\mathbb{R}^1)\times \mathcal{P}$-measurable 
+    \[Y:\mathbb{R}^1\times [0,\infty)\times \Omega\rightarrow \mathbb{R}^1, \quad (a,t,\omega)\mapsto Y^a_t(\omega)\]
+    such that for every $a\in \mathbb{R}^1$, $Y^a$ and $I^X(\Phi^a)$ are distinguishable as stochastic processes in t, and for every finite measure $\mu$ on $(\mathbb{R}^1,\mathcal{B}(\mathbb{R}^1))$, with probability one, we have
+    \[\int_{\mathbb{R}^1} Y_t^a \mu(da)= \int_0^t \int_{\mathbb{R}^1}\Phi^a_s\mu(da)\,dX_s,\quad \forall t\geq 0\]
+    
+    \end{enumerate}
+    
+
+    
+    
+\noindent
+\textbf{problem 4.} Let $B_t$ be an $\{\mathcal{F}_t\}$- Brownian motion defined on a filtered probablity sapce which satisfies the ususal conditions. Let $u_t$, $\sigma_t$ be two uniformly bounded, $\{\mathcal{F}_t\}$- progressively measurable processes.
+\begin{enumerate}[(1)]
+    \item By using Ito formula, find a continuous semimartingale $X_t$ explictly, such that 
+     \[ X_t = 1+ \int_0^t X_s\mu_s\,ds+ \int_0^t X_s\sigma_s\,dB_s \]
+     By using Ito formula again, show that such $X_t$ is unique.
+    \item Assuming further that $\sigma \geq C$ for some constant $C>0$. Given $T>0$, construct a probability measure $\widetilde{\mathbb{P}}_T$, equivalent to $\mathbb{P}$, under which $\{X_t,\mathcal{F}_t:0\leq t \leq T \}$ is a continuous martingale.
+\end{enumerate}
+\begin{proof}
+\begin{enumerate}[(1)]
+    \item (Guess):\[X_t = \exp\left( \int_0^t\sigma_s \,dB_s + \int_0^t (u_s-\frac{1}{2}\sigma^2_s)\,ds \right )\]
+    
+    $X_0=0$, By Ito formula, $\log(X_t)=\int_0^t\frac{1}{X_s}\,dX_s+\frac{1}{2}\int_0^t -\frac{1}{X^2_s}\,dX_s$, since 
+     \[dX_t = \mu_sX_sds + \sigma_s X_sdX_s,\quad \langle X \rangle_t  = \int_0^t X_s^2\sigma_s^2\,ds\]
+     thus $\log(X_t)= \int_0^t \mu_s-\frac{1}{2}\sigma_s\,ds+\int_0^t \sigma_s \,dB_s$, $X_t=\exp\left(\int_0^t \mu_s-\frac{1}{2}\sigma_s\,ds+\int_0^t \sigma_s \,dB_s\right)$
+     ,which is a semimartingale. 
+     
+     
+     
+     
+     
+     
+    \item $M_t=X_t - 1 -\int X_su_s\,ds = \int_0^t X_s\sigma_s\,dB_s$ is a local martingale under $\mathbb{P}$, by Girsanov's theorem, $M_t- \int_0^t Y_s\,d\langle M,Y\rangle_s$ is a local martingale under $\widetilde{\mathbb{P}}_T$, where $\widetilde{\mathbb{P}}_T$ is induced by $\xi_T^Y=\exp\left( \int_0^T Y_s\,dB_s-\frac{1}{2}\int_0^T Y^2_s\,ds\right)$, so we need that 
+     \[M_t-\int_0^t Y_s\,d\langle M,B,\rangle_s=X_t +constant\]
+     that is, $Y_s= \frac{\mu_s}{\sigma_s}$.
+\end{enumerate}
+\end{proof}
+
+
+
+
+\noindent 
+\textbf{Problem 5.} Let $B_t$ be a one dimensional Brownian motion and let ${\mathcal{F}_t^B}$ be the augmental natural filtration.
+\begin{enumerate}[(1)]
+    \item Fix $T>0$. For $\xi = B_T^2$ and $B_T^3$, find the unique progressively measurable process $\Phi$ on $[0,T]$ with $E[\int_0^T\Phi^2 dt]<\infty$, such that $\epsilon = E[\xi]+\int_0^T\Phi_t\,d B_t$.
+    \item Constuct a process $\Phi\in L^2_{loc}(B)$ with $\int_0^{\infty} \Phi_t^2\,dt <\infty$ almost surely(so $\int_0^{\infty}\Phi_t\,dB_t$ is well defined), such that $\int_0^{\infty} \Phi_t \,dB_t=0$ but with probability one, $0< \int_0^{\infty}\Phi_t^2\,dt<\infty$.
+    \item Consider $S_1\triangleq \max_{0\leq t\leq 1}B_t$. By writing $E[S_1|\mathcal{F}_t]$ as a function of $(t,S_t,B_t)$, find the unique progressively measurable process $\Phi$ on $[0,1]$ with $E[\int_0^1 \Phi^2_t\,dt]<\infty$,such that $S_1 = E[S_1] + \int_0^1 \Phi_t\,d B_t$.  
+\end{enumerate}
+
+\begin{proof}
+\begin{enumerate}[(1)]
+    \item  by Ito formula, \[B_T^2 = T + 2 \int_0^T B_s\,d B_s = E[B_T^2] + \int_0^T 2B_s\, dB_s\]
+     \begin{eqnarray*}
+         B_T^3  & = &  0 + \int_0^t 3B_s^2\,dB_s+ \int_0^t 6B_s\,ds\\
+          &=& \int_0^t 3B_s^2\,dB_s+ 6(TB_T-\int_0^T s \,dB_s)\\
+          & = & \int_0^t 3B_s^2\,dB_s+ 6(T\int_0^T \,dB_s-\int_0^Ts\,dB_s)\\
+          & = & 0 + \int_0^t 3B_s^2 + 6(T-s)\,dB_s
+    \end{eqnarray*}
+    \item (???)
+    \item \begin{eqnarray*}
+        E[S_1|\mathcal{F}_t] & =  & E[\max\{\max_{0\leq s\leq t}B_s, \max_{t\leq s\leq 1}B_s\}|\mathcal{F}_s]\\
+                 & = & E[\max\{\max_{0\leq s\leq t}B_s,B_t+ \max_{t\leq s\leq 1}B_s-B_t\}|\mathcal{F}_s]\\
+                 & = & \max\{S_t, B_t + \sqrt{\frac{2t}{\pi}}\}
+         \end{eqnarray*}
+        (???)
+\end{enumerate}
+\end{proof}
+
+
+
+\noindent
+\textbf{Problem6.} 
+\begin{enumerate}[(1)]
+\item Let $B_t$ be the d-dimensional Brownian motion. Define $\tau = \inf\{t\geq 0: |B_t|=1\}$. What is the distribution of $B_{\tau}$? Show that $B_{\tau}$ and $\tau$ are independent.
+\item Let $c \in \mathbb{R}^d$ and define $X_t= B_t + ct$ to be the d-dimensional Brownian motion with drift vector $c$. Define $\tau$ the same way as before but for the process $X_t$. By using Girsanov's theroem under a suitable framework, show that $X_{\tau}$ and $\tau$ are independent. 
+\end{enumerate}
+\begin{proof}
+\begin{enumerate}[(1)]
+    \item since Brownian motion is symmetric, $B_{\tau}$ is uniformly distributed on $\{(x_1,\cdots,x_d):\sum^d_{i=1}x^2_i=1\}$
+    \item $X_t= B_t-\int_0^t -c\,ds$, define $\xi_t^x \triangleq \exp(\int_0^t -c\,dB_s-\frac{1}{2}\int_0^t c^2\,ds)$ and 
+   \[ \widetilde{P}_T(A) \triangleq E[1_A\xi_T^x]],\quad A\in \mathcal{F}_T \]
+   by Girsanov's theroem, under such measure $\widetilde{P}_T$, $B_t-ct$ is a standard Brownian motion. thus $X_{\tau}$ and $\tau$ are independent under measure $\widetilde{P}_T$.
+\end{enumerate}
+\end{proof}
+
+\noindent
+\textbf{Problem 7.} Let $B_t$ be a one dimensioanl Brownian motion and let $l_t$ be its local time at 0.
+\begin{enumerate}
+    \item Let $X_t=B_t+l_t$ where $c \in \mathbb{R}^1$. Define $L^a$ to be the local time at $a$ of $X$. Show that for every $T>0$ and $k\geq 1$, there exists some constant $C_{T,k}$ such that 
+      \[E[\sup_{0\leq t\leq T}|L_t^a-L_t^b|]\leq C_{T,k}|a-b|^k\]
+      Conclude that $\{L_t^a:a\in \mathbb{R}^1,t\geq 0\}$ has a modification which is locally $\gamma$-Holder continuous in $a$ uniformly on every finite $t$-interval for every $\gamma \in (0,1/2)$.
+      \item Let $\lambda,\mu>0$ with $\lambda \neq \mu$. After taking the modification given by Thereom 5.18 in the lecture notes, show that the local time $L_t^a$ of the continuous semimartingale $X_t\triangleq \lambda B_t^+-\mu B_t^-$ is discontinuous at $a=0$. Compute this jump (at any given $t>0$).
+\end{enumerate}
+\begin{proof}
+\begin{enumerate}[(1)]
+    \item 
+    \item 
+    
+\end{enumerate}
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

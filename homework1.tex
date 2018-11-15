@@ -1,0 +1,276 @@
+\documentclass{article}
+
+\usepackage[left=1.25in,top=1.25in,right=1.25in,bottom=1.25in,head=1.25in]{geometry}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+\usepackage{verbatim,float,url,enumerate}
+\usepackage{graphicx,subfigure,psfrag}
+\usepackage{natbib}
+
+\newtheorem{algorithm}{Algorithm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\newcommand{\argmin}{\mathop{\mathrm{argmin}}}
+\newcommand{\argmax}{\mathop{\mathrm{argmax}}}
+\newcommand{\minimize}{\mathop{\mathrm{minimize}}}
+\newcommand{\maximize}{\mathop{\mathrm{maximize}}}
+\newcommand{\st}{\mathop{\mathrm{subject\,\,to}}}
+\newcommand{\dist}{\mathop{\mathrm{dist}}}
+
+\def\R{\mathbb{R}}
+\def\E{\mathbb{E}}
+\def\P{\mathbb{P}}
+\def\Cov{\mathrm{Cov}}
+\def\Var{\mathrm{Var}}
+\def\half{\frac{1}{2}}
+\def\sign{\mathrm{sign}}
+\def\supp{\mathrm{supp}}
+\def\th{\mathrm{th}}
+\def\tr{\mathrm{tr}}
+\def\dim{\mathrm{dim}}
+\def\hbeta{\hat{\beta}}
+
+\begin{document}
+
+\title{Homework 1}
+\author{\Large Convex Optimization 10-725/36-725}
+\date{{\bf Due Tuesday September 13 at 5:30pm \\
+submitted to Christoph Dann in Gates 8013} \\
+(Remember to a submit separate writeup for each \\ 
+problem, with your name at the top) \\
+\bigskip Total: 75 points}
+\maketitle
+
+\section{Convex sets (20 points)}
+
+\noindent
+(a, 12 pts) Closed sets and convex sets. 
+\begin{enumerate}[i.]
+\item Show that a polyhedron
+  $\{x \in \mathbb{R}^n : Ax \leq b \}$, for some $A\in \R^{m\times 
+    n},  b\in \R^m$, is both convex and closed. 
+\item  Show that if $S_i \subseteq \R^n, i\in I$ is a collection of
+  convex  sets, then their intersection $\cap_{i\in I} S_i$ is also
+  convex.  Show that the same statement holds if we replace
+  ``convex'' with ``closed''. 
+\item Given an example of a closed set in $\R^2$ whose convex hull is
+  not closed. 
+\item  Let $A\in\R^{m\times n}$. Show that if $S\subseteq \R^m$ is
+  convex then so is $A^{-1}(S) =\{ x \in \R^n : Ax
+  \in S\}$, which is called the preimage of $S$ under the map $A :
+  \R^n  \to \R^m$. Show that the same statement holds if we replace  
+  ``convex'' with ``closed''.  
+\item  Let $A\in\R^{m\times n}$.  Show that if $S\subseteq \R^n$ is 
+  convex then so is $A(S) = \{ Ax : x \in S \}$, called the image of
+  $S$ under $A$.
+\item  Give an example of a matrix $A\in\R^{m\times n}$ and a set
+  $S\subseteq \R^n$ that is closed and convex but such that $A(S)$ is
+  not closed. 
+\end{enumerate}
+
+\bigskip
+\noindent
+(b, 4 pts) The following is an important property of polyhedra: 
+\begin{equation}
+\label{eq:poly_proj}
+\text{$P \subseteq \R^{m+n}$ is a polyhedron} 
+\; \Rightarrow \;
+\text{$\{x\in \R^n : \text{$(x,y)\in P$ for some $y\in\R^m$}\}$ 
+is a polyhedron}.
+\end{equation}
+(Bonus: prove this property.)
+\begin{enumerate}[i.]
+\item
+Use the above property \eqref{eq:poly_proj} about polyhedra  to conclude 
+that if $A\in \R^{m\times n}$ and $P\subseteq \R^n$ is a polyhedron
+then $A(P)$ is a polyhedron.
+
+\item Give an example to show that \eqref{eq:poly_proj}
+  is no longer true if we replace ``polyhedron'' with ``closed and
+  convex set''. 
+\end{enumerate}
+
+\bigskip
+\noindent
+(c, 4 pts) The following is a ``strict'' variant of the Separating
+Hyperplane Theorem: if $C,D \subseteq \R^n$ are disjoint, closed
+and convex, and (say) $D$ is bounded, then there exists $a \in
+\R^n, b \in \R$ with $a\not=0$ such that $a^T x > b$ for all $x \in C$
+and $a^T x < b$ for all $x \in D$ (i.e., the hyperplane $\{x \in
+\R^n: a^T x = b\}$ strictly separates $C,D$).  Use this to prove   
+{\em Farkas' Lemma}: 
+given $A \in \mathbb{R}^{m \times n}, b \in \R^m$, exactly one of 
+the following is true:
+\begin{itemize}
+\item $\exists \; x\in \R^n$ such that $Ax=b, x \geq 0$;
+\item $\exists \; y\in \R^m$ such that $A^Ty \geq 0, y^Tb < 0$. 
+\end{itemize}
+(Hint: it will help you to use part (b.i), to deduce that the set
+$\{Ax : x \geq 0\}$ is a polyhedron, and hence closed and convex by
+part (a.i).)
+
+\section{Convex functions (16 points)}
+
+\noindent
+(a, 6 pts) Prove that $f(x,y) = |xy| + a(x^2+y^2)$ is convex if and
+only if $a \geq 1/2$.  Also prove that it is strongly convex if $a >
+1/2$. (Bonus: produce 3d plots of $f$, one for each
+$a \in \{0,1/4,1/2,3/4\}$.)
+
+\bigskip
+\noindent
+(b, 6 pts) In each case below specify whether the function is strongly
+convex, strictly convex, convex, or nonconvex, and give a brief
+justification. 
+
+\begin{enumerate}[i.] 
+\item The {\em logarithmic barrier function}, $f:\R^{n}_{++} 
+  \rightarrow \R$ defined as 
+\[
+f(x) = -\sum_{i=1}^n \log(x_i).
+\]
+\item The {\em entropy function}, $f:\{x\in \R^{n}_{+}:
+  \sum_{i=1}^n{x_i} =1\} \rightarrow \R$ defined as 
+\[
+f(x) = \left\{
+\begin{array}{rl}
+-\sum_{i=1}^n x_i \log(x_i) & \text{ if } \; x > 0 \\
+0 & \text{ otherwise.}
+\end{array}
+\right.
+\]
+\end{enumerate} 
+
+\bigskip
+\noindent
+(c, 4 points) Let $f$ be twice differentiable, with $\mathrm{dom}(f)$ 
+convex.  Prove that $f$ is convex if and only if 
+$$
+(\nabla f(x) - \nabla f(y))^T (x-y) \geq 0,
+$$
+for all $x,y$.  This property is called {\it monotonicity} of the
+gradient $\nabla f$.  
+
+
+\section{Lipschitz gradients
+and strong convexity (16 points)}
+
+Let $f$ be convex and twice differentiable.
+
+\bigskip
+\noindent
+(a, 8 pts) Show that the following statements are equivalent.
+\begin{enumerate}[i.]
+\item $\nabla f$ is Lipschitz with constant $L$;
+\item $(\nabla f(x) - \nabla f(y))^T(x-y) \leq L \|x-y\|_2^2$ for all
+  $x,y$; 
+\item $\nabla^2 f(x) \preceq LI$ for all $x$;
+\item $f(y) \leq f(x) + \nabla f(x)^T (y-x) + \frac{L}{2} \|y-x\|_2^2$
+  for all $x,y$.
+\end{enumerate}
+
+\bigskip
+\noindent
+(b, 8 pts) Show that the following statements are equivalent.
+\begin{enumerate}[i.]
+\item $f$ is strongly convex with constant $m$;
+\item $(\nabla f(x) - \nabla f(y))^T(x-y) \geq m \|x-y\|_2^2$ for all
+  $x,y$;
+\item $\nabla^2 f(x) \succeq mI$ for all $x$;
+\item $f(y) \geq f(x) + \nabla f(x)^T (y-x) + \frac{m}{2}
+  \|y-x\|_2^2$ for all $x,y$.
+\end{enumerate}
+
+\section{Solving optimization problems with CVX (23 points)}
+
+CVX is a fantastic framework for disciplined convex programming---it's rarely
+the fastest tool for the job, but it's widely applicable, and so it's a great
+tool to be comfortable with. In this exercise we will set up the CVX
+environment and solve a convex optimization problem.
+
+In this class, your
+solution to coding problems should include plots and whatever explanation
+necessary to answer the questions asked. In addition, full code should be
+submitted as an appendix to the homework document.
+
+CVX variants are available for each of the major numerical programming
+languages. There are some minor syntactic and functional differences between the
+variants but all provide essentially the same functionality. The Matlab version
+(and by extension, the R version which calls Matlab under the covers) is the
+most mature but all should be sufficient for the purposes of this
+class.
+
+Download the CVX variant of your choosing:
+\begin{itemize}
+\item Matlab - \url{http://cvxr.com/cvx/}
+\item Python - \url{http://www.cvxpy.org/en/latest/}
+\item Julia - \url{https://github.com/JuliaOpt/Convex.jl}
+\item R - \url{http://faculty.bscb.cornell.edu/~bien/cvxfromr.html}
+\end{itemize}
+and consult the documentation to understand the basic functionality. Make sure
+that you can solve the least squares problem $\min_\theta \;
+\|y-X\theta\|_2^2$ for a vector $y$ and matrix $X$. Check your answer
+by comparing with the analytic least squares solution.
+
+\bigskip
+\noindent
+(a) Using CVX, we will solve the 2d fused lasso problem discussed in Lecture 1:
+$$ \min_\theta \; \frac{1}{2} \sum_{i=1}^n(y_i - \theta_i)^2 +
+\lambda \sum_{\{i,j\} \in E}|\theta_i - \theta_{j}|.$$
+The set $E$ is the set of all undirected edges connecting horizontally or
+vertically neighboring pxiels in the image. More specifically, $\{i,j\} \in E$
+if and only if pixel $i$ is the immediate neighbor of pixel $j$ on the left,
+right, above or below. 
+
+\begin{enumerate}
+    \item (9 pts) Load the basic test data from \texttt{circle.csv} and solve the 2d fused lasso problem
+with $\lambda = 1$. Report the objective value obtained at the solution and plot
+the solution and original data as images. Why does the shape change its form?
+
+\item (6 pts) Next, we consider how the solution changes as we vary $\lambda$. Load a grayscale $64 \times 64$ pixel version of the
+standard Lenna test image from \texttt{lenna\_64.csv} and solve the 2d fused
+lasso problem for this image for $\lambda \in \{ 10^{-k/4} \, : \,
+k=0, 1, \dots, 8 \}$.  For each $\lambda$, report the value of the
+optimal objective value, plot the optimal image and show a histogram of
+the pixel values ($100$ bins between values $0$ and $1$). What change in the histograms can you observe with varying $\lambda$?
+\end{enumerate}
+
+\bigskip
+\noindent
+(b, 8 pts) Disciplined convex programming or DCP is a system for composing
+functions while ensuring their convexity. It is the language that
+underlies CVX.
+Essentially, each node in the parse tree for a convex
+expression is tagged with attributes for curvature (convex, concave, affine,
+constant) and sign (positive, negative) allowing for reasoning about the
+convexity of entire expressions. The website \url{http://dcp.stanford.edu/}
+provides visualization and analysis of simple expressions.
+
+Typically, writing problems in the DCP form is natural, but in some cases
+manipulation is required to construct expressions that satisfy the
+rules. For each set of mathematical expressions below (all define a convex set),
+give equivalent DCP expressions along with a brief explanation of why the DCP
+expressions are equivalent to the original. DCP expressions should be given in a
+form that passes analysis at \url{http://dcp.stanford.edu/analyzer}.
+
+Note: this question is really about developing a better understanding of
+the various composition rules for convex functions.
+
+\begin{enumerate}
+\item $\|(x,y)\|_1^3 \le 5x + 7$
+\item $\frac{2}{x} + \frac{9}{z-y} \leq 3, x > 0, y < z$
+\item $\sqrt{x^2 + 4} + 2y \leq  - 5x$
+\item $(x+3)z(y-5) \geq 8, x \geq -3, z \geq 0, y \geq 5$
+\item $\frac{(x + 3z)^2}{\log y} + 2 y^2 \leq 10, y > 1$
+\item $\log\left(e^{-\sqrt{x}} + e^{2z}\right) \leq -e^{5y}, x \geq 0$
+\item $\sqrt{\|(2x - 3y, y + x)\|_1} = 0$
+\item $y \log\left( \frac{y}{2x}\right) \leq y + x - 30, x > 0, y > 0$
+\end{enumerate}
+
+\end{document}

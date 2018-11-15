@@ -1,0 +1,295 @@
+
+\documentclass{article}     % Specifies the document class
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{remark}{Remark}
+\usepackage{enumerate}
+\usepackage{float}
+                             % The preamble begins here.
+\title{Problem Sheet 5}  % Declares the document's title.
+\author{WEI PENG}      % Declares the author's name.
+\date{\today}      % Deleting this command produces today's date.
+
+\newcommand{\ip}[2]{(#1, #2)}
+                             % Defines \ip{arg1}{arg2} to mean
+                             % (arg1, arg2).
+
+%\newcommand{\ip}[2]{\langle #1 | #2\rangle}
+                             % This is an alternative definition of
+                             % \ip that is commented out.
+
+\begin{document}             % End of preamble and beginning of text.
+\maketitle             % Produces the title.
+
+\emph{You are incourage to discuss with your classmates whenever you find it helpful}
+
+\noindent
+
+
+\textbf{Problem1}. (1) Suppose that $\{X_t:\mathcal{F}_t:t\geq 0\}$ is a right continuous supermartingale and $\tau$ is an $\{\mathcal{F}_t\}$-stopping time. Show that the stopped process $X_t^{\tau} \triangleq X_{\tau \wedge t}$ is a supermartingale both with respect to the filtrations $\{\mathcal{F}_t:t\geq 0\}$ and $\{\mathcal{F}_{\tau \wedge t}:t\geq 0\}$.
+
+(2) Let $\{X_t:t\geq 0\}$ be an $\{\mathcal{F}_t\}$-adapted and right continuous stochastic process. Suppose that for any bounded stopping time $\sigma \leq \tau$, $X_{\sigma}\leq X_{\tau}$. Show that $\{X_t,\mathcal{F}_t\}$ is a submartingale.
+
+\begin{proof}
+(1) By bounded optional sampling theorem.
+\[E[X_{\tau \wedge t}|\mathcal{F}_{\tau \wedge s}]\leq X_{\tau \wedge s}\]
+since $X_{\tau \wedge t}\in \mathcal{F}_{\tau}$,
+\[E[X_{\tau \wedge t}|\mathcal{F}_s]=E[E[X_{\tau \wedge t}|\mathcal{F}_{\tau}]|\mathcal{F}_s]=E[X_{\tau \wedge t}|\mathcal{F}_{\tau\wedge s}]\leq X_{\tau \wedge s}\]
+Measurability and integrability are staightforward.
+
+(2) For any $A\in \mathcal{F}_s$, consider the following stopping time
+\[\tau=\begin{cases}
+t, & \omega \in A\\
+s, & \omega \in A^c
+\end{cases}\]
+by O.S.T. $E[X_{\tau}]\geq E[X_s]$, which means $E[X_t1_A]\geq E[X_s1_A]$.
+\end{proof}
+
+\noindent
+\textbf{Problem2}. Let $(\Omega,\mathcal{F},\mathbb{P};\{\mathcal{F}_t:t\geq 0\})$ be a filtered probability space which satisfies the ususal conditions. Suppose that $\mathbb{Q}$ is another probability measure on $(\Omega,\mathcal{F},\mathbb{P})$ satisfying that $\mathbb{Q}\ll \mathbb{P}$ on $\mathcal{F}_t$ for every $t\geq 0$.
+
+\begin{enumerate}[(1)]
+    \item Let $M_t$ be a version of $d \mathbb{Q}/d \mathbb{P}$. Show that $\{M_t,\mathcal{F}_t\}$ is a martingale.
+    \item Take a cadlag modification of $M_t$ and still denote it by $M_t$ for simplicity. Show that $\{M_t\}$ is uniformly integrable if and only if $\mathbb{Q}\leq \mathbb{P}$ on $\mathcal{F}_{\infty}$, In this case, we have
+    \begin{enumerate}[(i)]
+        \item $M_{\infty}\triangleq \lim_{t\rightarrow \infty} M_t= d \mathbb{Q}/d \mathbb{P}$ on $\mathcal{F}_{\infty}$.
+        \item for every $\{\mathcal{F}_t\}$-stopping time $\tau$, $\mathbb{Q}\leq \mathbb{P}$ on $\mathcal{F}_{\tau}$ and $M_{\tau}=d\mathbb{Q}/\mathbb{P}$ on $\mathcal{F}_{\tau}$.
+        \end{enumerate}
+    \end{enumerate}
+\begin{proof}
+(1) Since $M_t$ is a version of $d \mathbb{Q}/d \mathbb{P}$, then $M_t$ is $\mathcal{F}_t$-measurable, and for any $A\in \mathcal{F}_s\subset\mathcal{F}_t$,
+\[\int_{A}M_td\mathbb{P}=\mathbb{Q}(A)=\int_{A}M_sd\mathbb{P}\]
+By the definition of conditional expectation, $\{M_t,\mathcal{F}_t\}$ is a martingale.
+
+(2) By the definition of $M_t$, it is non-negative, thus
+\[E[M_t]=\int M_t d\mathbb{P}=\mathbb{Q}(\Omega)=1~~~~~\quad (*)\]
+If $M_t$ is U.I., for any $A\in \mathcal{F}_{\infty}$ satisfying $\mathbb{P}(A)=0$, then $\exists t>0$, $\forall s\geq t$, $A\in \mathcal{F}_s$
+\[Q(A)=\int_A M_sd\mathbb{P}=0, \quad  (by ~uniform~equicontinuity) \]
+on the other hand, if $\mathbb{Q}\ll \mathbb{P}$ on $\mathcal{F}_{\infty}$, let $M^*$ be a version of $d \mathbb{Q}/d \mathbb{P}$ on $\mathcal{F}_{\infty}$.
+\[\sup_t \int_{M_t\geq \lambda}M_td\mathbb{P}=\sup_t \mathbb{Q}(M_t>\lambda)=\sup_t\int_{M_t>\lambda}M^*d\mathbb{P}\rightarrow 0\quad (\lambda\rightarrow 0)\]
+so $\{M_t\}$ is U.I.
+\begin{enumerate}[(i)]
+    \item By (*) and U.I., there exists $M_\infty$, such that $M_t \rightarrow M_{\infty}$ a.s.and in $L^1$,   $M_{\infty}\in \mathcal{F}_{\infty}$, and for any $A\in \mathcal{F}_{\infty}$, $\exists t\geq 0$, such that for any $s\geq t$, $A\in \mathcal{F}_s$.
+    \[\mathbb{Q}(A)=\int_A M_sd\mathbb{P}\]
+    by D.C.T. we have $\mathbb{Q}(A)=\int_A M_{\infty}d\mathbb{P}$, which means $M_{\infty}$ is a version of $d \mathbb{Q}/d \mathbb{P}$ on $\mathcal{F}_{\infty}$.
+    \item  Since $\mathcal{F}_{\tau}\subset \mathcal{F}_{\infty}$ and $\mathbb{Q}\ll \mathbb{P}$ on $\mathcal{F}_{\infty}$, so $\mathbb{Q}\ll \mathbb{P}$ on $\mathcal{F}_{\tau}$. and snce $E[M_{\infty}|\mathcal{F}_{\tau}]=M_{\tau}$, we have 
+    \[Q(A)=\int_{A}M_{\infty}d\mathbb{P}=\int_{A}M_{\tau}d\mathbb{P}\]
+    thus, $M_{\tau}=d \mathbb{Q}/d\mathbb{P}$ on $\mathcal{F}_{\tau}$. 
+
+\end{enumerate}
+
+
+\end{proof}
+
+
+\noindent 
+\textbf{Problem3}. Let $\{X_t, \mathcal{F}_t\}$ be a right continuous martingale which is bounded in $L^p$ for some $p>1$(i.e. $\sup_{0\leq t<\infty}E[|X_t|^p]\leq M<\infty$). Show that $X_t$ converges to some $X_{\infty}$ almost surely and in $L^p$.
+
+
+\begin{proof}
+\[E|X_t|\leq (E[|X_t|^p])^{\frac{1}{p}}\]
+so $E[|X_t|]$ is uniformly bounded, by Doob's convergence theorem, $X_t\rightarrow X_{\infty}$, a.s.
+Moreover $X_t$ is U.I. since 
+\[\int_{|X_t|>\lambda} |X_t|\leq \left(E[|X^t|^p]\right)^{\frac{1}{p}}\left(P(|X_t|>\lambda)\right)^{\frac{1}{q}}\leq M\left(P(|X_t|>\lambda)\right)^{\frac{1}{q}}\rightarrow 0\quad \lambda\rightarrow \infty\]
+Thus $X_t\rightarrow X_{\infty}$ a.s and in $L^1$, and by Doob's $L^p$ inequality,
+\[||\sup_{0\leq t\leq T}X_t||_p\leq \frac{p}{p-1}||X_T|_p\leq M^{\frac{1}{p}}\]
+and since  $|X_t-X_{\infty}|^p\leq (2\sup_{0\leq t\leq \infty}X_t)^p$, by D.C.T, $X_t\rightarrow X_{\infty}$ a.s. and in $L^p$.
+
+
+\end{proof}
+
+\noindent
+\textbf{Problem4}. (1) Show that $\log t\leq t/e$ for every $t>0$, and conclude that 
+\[a\log^+t\leq a \log^+a +\frac{b}{e}\]
+for every $a,b>0$, where $\log^+t=\max\{0,\log t\}$(t>0).
+
+(2) Suppose that $\{X_t,\mathcal{F}_t:t\geq 0\}$ is a non-negative and right continuous submartingale. Let $\rho: [0,\infty)\rightarrow R$ be an increasing and right continuous function with $\rho(0)=0$. Show that 
+\[E[\rho(X^*_T)]\leq E[X_T\int_0^{X^*_T}\lambda^{-1}d\rho(\lambda)], \quad \forall T>0\],
+where $X^*_T\triangleq \sup_{[0,T]}X_t$.
+
+(3) By choosing $\rho(t)=(t-1)^+(t\geq 0)$, show that 
+\[E[X^*_T]\leq \frac{e}{e-1}(1+E[X_T\log+X_T]),\quad \forall T>0\].
+
+\begin{proof}
+(1) trivial.
+
+(2) \begin{eqnarray*}
+E[\rho(X^*_T)]& = &\int_0^{\infty}P(\rho(X^*_T)>\lambda)d\lambda\\
+& \leq & \int_0^{\infty}\lambda^{-1}E[X_T1_{  \{\rho(X^*_T)>\lambda\}  }]d\lambda\\
+& = &  E[X_T\int_0^{X^*_T}\lambda^{-1}d\rho(\lambda)]
+\end{eqnarray*}
+
+(3)\begin{eqnarray*}
+E[X^*_T] & = & E[X^*_T1_{\{X^*_T>1\}}]+E[X^*_T1_{\{X^*_T\leq 1\}}]\\
+& \leq & E[\rho(X^*_T)]+1\\
+& \leq & E[X_T\log^+X_T^*]+1\\
+& \leq & E[X_T\log^+ X_T]+E[X^*_T]/e +1
+\end{eqnarray*}
+which implies 
+\[E[X^*_T]\leq \frac{e}{e-1}(1+E[X_T\log+X_T]),\quad \forall T>0\].
+
+\end{proof}
+
+\noindent 
+\textbf{Problem5}. Suppose that $\{X_t,\mathcal{F}_t:t\geq 0\}$ is a continuous martingale and 
+\[\sup_{t\geq 0}X_t(\omega)=\infty\quad \inf_{t\geq 0}X_t(\omega)=-\infty, \quad \omega\in \Omega\]
+Define $\tau_0=0$, and $\tau_n=\inf\{t>\tau_{n-1}:|X_t-X_{\tau_{n-1}}|=1\}(n\geq 1)$. Show that $\tau_n$ are finite $\{\mathcal{F}_t\}$-stopping time. What is the distribution of the random sequence $\{X_{\tau_n}:n\geq 1\}$.
+
+\begin{proof}
+Suppose $\tau_{n-1}$ is a finite stopping time. For any $\omega$, since it has continuous path, it is bounded in $[0,\tau_{n-1}(\omega)]$, and since $\sup_{t\geq 0}X_t(\omega)=\infty$ and  $\inf_{t\geq 0}X_t(\omega)=-\infty$, so $\tau_n(\omega)=\inf\{t>\tau_{n-1}(\omega):|X_t-X_{\tau_{n-1}}|=1\}<\infty$. by O.S.T.
+\[\begin{cases}
+P\left(E[X_{\tau_n}]|\mathcal{F}_{\tau_{n-1}}]=X_{\tau_{n-1}}+1\right)=1/2\\
+P\left( E[X_{\tau_n}]|\mathcal{F}_{\tau_{n-1}}]=X_{\tau_{n-1}}-1\right)=1/2
+\end{cases}\]
+
+Let $\xi_n$ be i.i.d. uniformly distribution on $\{-1,1\}$, then we have $$E[[X_{\tau_n}|X_{\tau_{n-1}}]=E[E[X_{\tau_n}]|\mathcal{F}_{\tau_{n-1}}]|X_{\tau_{n-1}}]=X_{\tau_{n-1}}+\xi_n$$
+By induction, we have $X_{\tau_n}=X_0+\sum_{i=1}^n \xi_n$, which is a random walk.
+
+\end{proof}
+
+
+\noindent
+\textbf{Problem6}. Let $\{X_t,\mathcal{F}_t\}$ be a continuous martingale which is uniformly integrable. Suppose there exists a constant $M_X>0$ such that 
+\[E[|X_{\infty}-X_{\tau}|\mathcal{F}_{\tau}]\leq M_X\quad a.s.\]
+for every $\{\mathcal{F}_t\}$-stopping time $\tau$, where $X_{\infty}=\lim_{t\rightarrow \infty} X_t$ which  exists amost surely and in $L^1$ according to uniformly integrability. Let $X^*=\sup_{t\geq 0}|X_t|$.
+\begin{enumerate}[(1)]
+    \item  Show that  for every $\lambda,\mu>0$,
+    \[P(X^*>\lambda+\mu)\leq \frac{M_X}{\mu}P(X^*>\lambda)\]
+    \item By using the result of (1), show that 
+    \[P(X^*>\lambda)\leq e^{2-\frac{\lambda}{e\cdot M_X}},\quad \forall \lambda>0\]
+    in particular, $\exp{\alpha X^*}$ is integrable when $ 0< \alpha<(eM-X)^{-1}$, which also implies that $X^*\in L^p$ for every $p\geq 1$.
+
+\end{enumerate}
+
+\begin{proof}
+(1) $\{X_t,\mathcal{F}_t;0\leq t\leq \infty\}$ is a martingale with last element, Let $\tau = \inf \{t\geq 0:X_t\geq \lambda+\mu\}$, then by O.S.T.
+\[E[(X_{\infty}-\lambda) 1_{\tau<\infty}]=E[(X_{\tau}-\lambda) 1_{\tau<\infty}]=E[\mu 1_{\tau <\infty}]=\mu P(\tau<\infty)\]
+
+let $\sigma=\inf\{t\leq 0: X_t\geq \lambda\}$
+\begin{eqnarray*}
+\mu P(X^*>\lambda+\mu) & = & \mu P(\tau<\infty)\\ 
+& \leq &  E[|X_{\infty}-\lambda)|1_{\tau<\infty}]\\ 
+& \leq &  E[|X_{\infty}-\lambda)|1_{\sigma<\infty}]\\ 
+& =&  E[|X_{\infty}-X_{\sigma})|1_{\sigma<\infty}]\\
+& \leq & M_XP(\tau\leq \infty)\\ 
+& = & M_X P(X^*>\lambda)
+\end{eqnarray*}
+
+
+
+
+
+(2)(????? fail to prove ) By observating, there exists some $\lambda^*>0$, the inequality holds when $\lambda \leq \lambda^* $.  
+for $\lambda>\lambda^*$, the following inequality will hold
+\begin{eqnarray*}
+P(X^*>\lambda) & \leq &\frac{M_X}{\lambda-\lambda^*}P(X^*>\lambda^*)\\
+& \leq  & \frac{M_X}{\lambda-\lambda^*}e^{2-\frac{\lambda^*}{e.M_x}}\\
+& \leq &(? fail )~ e^{2-\frac{\lambda}{e\cdot M_X}}
+\end{eqnarray*}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{proof}
+
+\noindent
+\textbf{Problem7}. Let $\{X_t,\mathcal{F}_t:t\geq 0\}$ be a cadlag submartingale over a filtered probability space which satisfies the usual conditons.
+
+\begin{enumerate}[(i)]
+    \item  Suppose that $X_t$ is non-negative, show that $X_t$ is of class (DL). Suppose further that $X_t$ is continuous, show that $X_t$ is regular.
+    \item  Suppose that $X_t$ is uniformly integrable. Show that $X_t$ is of class (D) in the sense that $\{X_{\tau}:\tau \in \mathcal{S}\}$ is iniformly integrable, where $\mathcal{S}$ is the set of finite $\{\mathcal{F}_t\}$-stopping times. Moreover, $A_{\infty} \triangleq \lim_{t\rightarrow \infty }A_t$ is integrable, where $A_t$ is the natural increasing process in the Doob-Meyer decomposition of $M_t$.
+\end{enumerate}
+
+\begin{proof}
+\begin{enumerate}[(i)]
+    \item First, let's show that $E[X_T|\mathcal{F}_\tau]$ is U.I.
+    \begin{eqnarray*}
+        E[|E[X_T|\mathcal{F}_\tau]|1_{|E[X_T|\mathcal{F}_\tau]|>\lambda}] &\leq & E[E[|X_T||\mathcal{F}_\tau]1_{E[|X_T||\mathcal{F}_\tau]>\lambda}]\\
+        & = & E[|X_T|1_{E[|X_T||\mathcal{F}_\tau]>\lambda}] \\
+        & = & E[|X_T|1_{E[|X_T||\mathcal{F}_\tau]>\lambda};|X_T|>\sqrt{\lambda}]+\\
+        &~~~& E[|X_T|1_{E[|X_T||\mathcal{F}_\tau]>\lambda};|X_T|\leq\sqrt{\lambda}]\\ 
+        & \leq &  E[|X_T||X_T|>\sqrt{\lambda}]+ \sqrt{\lambda}E[1_{E[|X_T||\mathcal{F}_\tau]>\lambda}]\\ 
+        & \leq & E[|X_T||X_T|>\sqrt{\lambda}]+ \sqrt{\lambda}\frac{E[|X_T|]}{\lambda}\\ 
+        & \rightarrow & 0 \quad (\lambda \rightarrow \infty)    
+    \end{eqnarray*}
+    Since  $0\leq X_{\tau}\leq E[X_T|\mathcal{F}_{\tau}]$, which means that $X_{\tau}$ is controlled by $E[X_T|\mathcal{F}_{\tau}]$ which is U.I., we obtain that $X_{\tau}$ is U.I.
+    
+    If $X_t$ is continuous, $\tau_{n} \uparrow \tau $, since $EX_{\tau}\leq E[X_T]$, So by D.C.T. 
+    \[\lim_{n\rightarrow \infty}E[X_{\tau_{n}}]=E{X_{\tau}}\]
+    $X_t$ is regular.
+   
+    \item Since $X_t$ is U.I., we have $X_t\rightarrow X_{\infty}$ a.s. and in $L^1$. Then $\{X_{t}:0\leq t\leq \infty\}$ is a non-negative supermartingale with last element. By O.S.T. \[E[X_{\infty}|\mathcal{F_{\tau}}]\geq X_{\tau}\geq 0\]
+    again, since $X_{\tau}$ is controlled by some conditional expectation, thus $X_{\tau}$ is U.I.
+    
+    \begin{eqnarray*}
+        E[A_{\infty}]& \leq& \lim\inf_tE[A_t]\quad (Fatou~Lemma)\\ 
+        & = & \lim\inf_{t}E[X_t-M_t]\\
+        &=& \lim\inf E[X_t]-E[M_0]\\
+        &\leq & \sup_t E[X_t]-E[M_0]\\
+        &< & \infty
+        \end{eqnarray*}
+  So, $A_{\infty}$ is integrable.
+    \end{enumerate}
+
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

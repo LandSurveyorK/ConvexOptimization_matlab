@@ -1,0 +1,345 @@
+% This is a sample LaTeX input file.  (Version of 12 August 2004.)
+%
+% A '%' character causes TeX to ignore all remaining text on the line,
+% and is used for comments like this one.
+
+\documentclass{article}     % Specifies the document class
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{enumerate}
+\usepackage{float}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{remark}{Remark}
+
+
+                             % The preamble begins here.
+\title{Problem Sheet 1}  % Declares the document's title.
+\author{WEI PENG}      % Declares the author's name.
+\date{\today}      % Deleting this command produces today's date.
+
+\newcommand{\ip}[2]{(#1, #2)}
+                             % Defines \ip{arg1}{arg2} to mean
+                             % (arg1, arg2).
+
+%\newcommand{\ip}[2]{\langle #1 | #2\rangle}
+                             % This is an alternative definition of
+                             % \ip that is commented out.
+
+\begin{document}             % End of preamble and beginning of text.
+\maketitle    
+% Produces the title
+
+\section{Convex Sets}
+(a,12pts) Closed sets and convex sets.
+\begin{enumerate}[i.]
+    \item Show that a polyhedron $\{x\in \mathbb{R}^n: Ax\leq b\}$, for some $A\in \mathbb{R}^{m\times n},b\in \mathbb{R}^m$, is both convex and closed.
+    \item Show that if $S_i\subset \mathbb{R}^n,i\in I$ is a collection of convex sets, then their interaction $\bigcap_{i\in I}S_i$ is also convex. Show that the same statement holds if we replace "convex" with "closed".
+    \item Given an example of a closed set in $\mathbb{R}^2$ whose convex hull is not closed.
+    \item Let $A\in \mathbb{R}^{m\times n}$. Show that if $S\subset \mathbb{R}^m$ is convex so is $A^{-1}(S)=\{x:\in \mathbb{R}^{n}: Ax=S\}$, which is called the preimage of $S$ under the maping $A;\mathbb{R}^{n}\rightarrow \mathbb{R}^{m}$. Show that the same statement holds if we replace "convex" with "closed".
+    \item Let $A\in \mathbb{R}^{m\times n}$. Show that if $S\subset \mathbb{R}^{n}$ is convex then so is $A(S)=\{Ax:x\in S\}$, called the image of $S$ under $A$.
+    \item Give an example of a matrix $A\in \mathbb{R}^{m\times n}$ and a set $S\subset \mathbb{R}^n$ that is closed and convex but such that $A(S)$ is not closed.
+\end{enumerate}
+
+\begin{proof}
+\begin{enumerate}[i.]
+\item  $A[\theta x +(1-\theta)y]= \theta Ax +(1-\theta) Ay\leq b$. Since $A:x\rightarrow Ax$ is is continuous mapping. so the preimage of the closed set $(-\infty,b]$ is absolutely closed.
+
+\item  Suppose $x,y\in \bigcap_{i\in I}S_i$, since  $S_i$ is convex, we have $\theta x +(1-\theta)y \in S_i, \forall i\in I$. If replace "convex" by "closed", it is also true as the property of a topology space.
+\item  $C=\{(x,y):y=x^2,x^2-y^2=1,x>0\}\bigcup \{(0,0)\}$.
+
+\item $\theta A^{-1}x + (1-\theta)A^{-1}y = A^{-1}[\theta x +(1-\theta)y]$. If replaces "convex" with "closed", it is also true since the preimage of a closed set by a continuous function is still closed.
+
+\item $\theta Ax +(1-\theta) Ay=A[\theta x +(1-\theta)y]$.
+\item $S=\{(x,y):x>0,y\geq 1/x\}$, $A: (x,y)\mapsto x$.
+\end{enumerate}
+
+
+
+
+
+
+\end{proof}
+
+
+
+
+(b,4pts) The following is an important property of polyhedra:
+
+
+$P \subset \mathbb{R}^{m+n}$ is a polyhedra $\Rightarrow$ $\{x\in \mathbb{R}^n: (x,y)\in P$~for~some~$y\in\mathbb{R}^m\}$ is a polyhedra.~~~~~~~~~~~~~~~~~(1)
+
+
+(Bonus:prove this property)
+\begin{enumerate}[i.]
+    \item Use the above property about polyhedra to conclude that if $A \in \mathbb{R}^{m\times n}$ and $P\subset \mathbb{R}^{n}$ is a polyhedra then $A(P)$ is a polyhedra.
+    \item Given an example to show that (1) is no longer true if we replace "polyhedra" with "close and convex set".
+\end{enumerate}
+
+\begin{proof}
+\begin{enumerate}[i.]
+
+    \item $\{Ax;x\in P\}=\{y:(x,y\in P^*\}$, 
+   where $P^*=\{(x,y): x\in P \& Ax=y\}$
+    \item same as (a) iv.
+
+ \end{enumerate}
+\end{proof}
+
+(c,4pts) The following is a "strict" variant of the Separating Hyperplane Theorem: if $C,D\subset \mathbb{R}$ are disjoint closed and convex, and (say) $D$ is bounded, then there exists $a\in  \mathbb{R}, b\in  \mathbb{R}$ with $a\neq 0$ such that $a^Tx>b$ for all $x\in C$(i.e. the hyperplane$\{x\in  \mathbb{R}:a^Tx=b\}$ strictly separeates $C,D$. Use this to prove Farkas' Lemma: give $A\in  \mathbb{R}^{m\times n}$, $b\in \mathbb{R}^m$, exactly one of the following is true:
+
+\begin{itemize}
+    \item $\exists x\in  \mathbb{R}^{n}$ such that $Ax=b,x\geq 0$.   (1)
+    \item $\exists y \in  \mathbb{R}^m$ such that $A^Ty\geq 0, y^Tb<0$.    (2)
+\end{itemize}
+
+\begin{proof}
+On one hand, suppose $Ax^*=b, x\geq 0$, then $\forall y$, $0>y^Tb=y^T(Ax^*)=(x^*)^T(A^Ty)$, then $A^Ty$ can not be $\geq 0$.
+
+On the other hand, if there is no feasible solution of (1), Consider $\{Ax:\geq 0\}$ and $\{b\}$, they are two disjoint closed and convex sets, and \{b\} is bounded. By the Separating Hyperplane Theorem above, There exists $y$, such that $y^Tb<0$, and $y^T(Ax)=x^T(Ay)\geq 0, \forall x\geq 0$, which implies $y$ is a feasible value of (2).
+
+
+\end{proof}
+
+
+\section{Convex Function}
+
+(a,6pts) Prove that $f(x,y)=|xy|+a(x^2+y^2)$ is convex if and only if $a\geq 1/2$. Also prove that it is strongly convex if $a>1/2$. (Bonus: product 3d plots of $f$, and each $a\in \{0,1/4,1/2,3/4\}$.)
+
+\begin{proof}
+\begin{itemize}
+    
+    \item 
+If $a<1/2$, consider points $(1,0)$ and $(0,1)$, 
+\[f((\theta,1-\theta))=\theta (1-\theta)+a(\theta^2+(1-\theta)^2)>a=\theta f((1,0))+(1-\theta)f((0,1))\]
+
+If $a\geq 1/2$, it is sufficient to consider $a=1/2$, since $\frac{m}{2}(x^2+y^2)$ is a convex function for any $m>0$.
+\item 
+if $a>1/2$, 
+ $$f((x,y))=|xy|+\frac{1}{2}(x^2+y^2)+\frac{2a-1}{2}(x^2+y^2)$$ 
+is strictly convex function since $\frac{1}{2}(x^2+y^2)$ is convex.
+
+if $a\leq 1/2$, there is no $m>0$, such that 
+ $$f((x,y))-\frac{m}{2}(x^2+y^2)=|xy|+(a-\frac{m}{2})(x^2+y^2)$$ 
+is convex since $(a-\frac{m}{2})<1/2$.
+
+\end{itemize}
+\end{proof}
+
+(b,6pts) In each case below specify whether the function is strongly convex, strictly convex, or nonconvex, and give a brief justification.
+\begin{enumerate}
+    \item The \emph{logarithmic barrier}, $f: \mathbb{R}_{++}\rightarrow  \mathbb{R}$:
+\[ f(x) = -\sum_{i=1}^{n} \log(x_i).  \]
+    \item The \emph{entropy function}, $f:\{x\in  \mathbb{R}_+^n: \sum_{i=1}^{n}x_i=1\}\rightarrow  \mathbb{R}$ defined as:
+    \[ 
+    f(x)=\left\{ 
+    \begin{array}{cc}
+     -\sum_{i=1}^{n} x_i\log(x_i) & \quad if ~x>0\\
+     0 &\quad otherwise.
+     \end{array}  \right.
+     \]
+\end{enumerate}
+
+\begin{proof}
+\begin{enumerate}
+\item $f_i(x):x\mapsto -\log(x_i)$ is strictly convex, and the sum of strictly convex functions is still strictly convex, whcih implies f(x) is strictly convex.(It is not hard to see that $f(x)$ is not strongly convex, since $f(x)-\frac{m}{2}||x||_2^2=\sum [-\log(x_i)-\frac{m}{2}(x_i^2)]$, for example, just consider $\{(x_1,0,\cdots,0)\}$).
+
+\item Similar to 1. $f(x)$ is strictly convex but not strongly convex.
+\end{enumerate}
+\end{proof}
+
+(c,4pts) Let $f$ be a twice differentiable, with $dom(f)$ convex. Prove that $f$ is convex if and only if 
+\[ (\nabla f(x)-\nabla f(y))^T(x-y)\geq 0
+,\]
+for all x,y. This property is called \emph{monotonicity} of the gradient $\nabla f$.
+
+\begin{proof}
+"$\Rightarrow$": if $f(x)$ is convex, then
+\[\left\{
+\begin{array}{c}
+f(y)-f(x)\geq \nabla f(X)^T(y-x)\\
+f(y)-f(x)\geq \nabla f(X)^T(y-x)
+\end{array}\right.
+\Rightarrow (\nabla f(x)-\nabla f(y))^T(x-y)\geq 0\]
+"$\Leftarrow$": Suppose  $(\nabla f(x)-\nabla f(y))^T(x-y)\geq 0$, since $\nabla f(y)=\nabla f(x)+\nabla^2 f(x)(y-x)+o(||x-y||^2)$, which implies
+\[\nabla^2 f(x)\geq 0,~~\forall x\]
+thus $f(x)$ is convex.
+
+
+\end{proof}
+
+\section{Lipschitz gradient and strong convexity}
+Let $f$ be convex and twice differentiable.
+
+(a,8pts) Show that the following statements are equivalent.
+\begin{enumerate}[i.]
+    \item $\nabla f $ is Lipchitz with constant $L$;
+    \item $ (\nabla f(x)-\nabla f(y))^T(x-y)\leq L||x-y||_2^2$;
+    \item $\nabla^2 f(x) \preccurlyeq LI$ for all $x$;
+    \item $f(y)\leq f(x) +\nabla f(x)^T(y-x)+\frac{L}{2}||y-x||^2_2$ for all $x,y$.
+    \end{enumerate}
+
+\begin{proof}
+\begin{itemize}
+    \item  i $\Rightarrow$ ii: $ (\nabla f(x)-\nabla f(y))^T(x-y)\leq ||\nabla f(x)-\nabla f(y)||||x-y||\leq L||x-y||_2^2$.
+    \item  ii $\Rightarrow$ iii:
+    \begin{eqnarray*} 
+        (y-x)^T\nabla^2 f(X)(y-x)& = &(y-x)^T(\nabla f(x)-\nabla f(y))^T(x-y)-o(||y-x||_2^2)\\
+        & = & \leq L|y-x|||^2-o(||y-x||_2^2)
+    \end{eqnarray*}
+    which implies iii.
+     
+    \item iii $\Rightarrow$ iv:
+\begin{eqnarray*} 
+         f(y) & = & f(x) +\nabla f(x)^T(y-x)+\frac{1}{2}\nabla^2 f(\widetilde{x})(y-x)\\
+       & \leq &  f(x) +\nabla f(x)^T(y-x)+\frac{L}{2}||y-x||^2_2
+    \end{eqnarray*}
+
+    \end{itemize}
+\end{proof}
+
+(b,8pts) Show that the following statements are equivalent.
+\begin{enumerate}[i]
+    \item $f$ is strongly convex with constant $m$.
+    \item $ (\nabla f(x)-\nabla f(y))^T(x-y)\geq m||x-y||_2^2$ for all $x,y$.
+    \item $\nabla^2 f(x)\succcurlyeq m I$ for all $x$;
+    \item $f(y)\geq f(x) +\nabla f(x)^T(y-x)+\frac{m}{2}||y-x||^2_2$ for all $x,y$.
+\end{enumerate}
+
+\begin{proof}
+\begin{itemize}
+ \item  i $\Rightarrow$ ii: if $f(x)$ is strongly convex, which means for any $m>0$, $f(x)+\frac{m}{2}||x||_262$ is convex. Then similar to i $\Rightarrow$ ii above, we will done.
+ \item  ii $\Rightarrow$ iii: similar to ii $\Rightarrow$ iii above.
+ \item iii $\Rightarrow$ iv: similar to ii $\Rightarrow$ iii above.
+ \item  iv $\Rightarrow$ i:
+    \begin{eqnarray*} 
+         iv  & \Rightarrow  &f(y)-\frac{m}{2}||y||_2^2\geq f(x)-\frac{m}{2}||x||_2^2+\nabla(f(x)-\frac{m}{2}||x||_2^2)(y-x)\\
+        & \Rightarrow & f(x)-\frac{m}{2}||x||_2^2)~is~convex
+    \end{eqnarray*}
+
+    \end{itemize}
+\end{proof}
+
+\section{Solving optimization problems with CVX}
+(a) Using CVX, we will solve the 2d fused lasso problem discusses in Lecture1:
+\[\min_{\theta}\frac{1}{2}\sum_{i=1}^{n}(y_i-\theta_i)^2+\lambda\sum_{\{i,j\}\in E}|\theta_i-\theta_j|\]
+
+\begin{figure}[hb]
+  \centering
+  \includegraphics[width=4in]{xy}
+  \caption[]
+   { original image vs. solution image}
+\end{figure}
+The object value is 182.799, because $\lambda = 1$, adds great penalty on the difference of neighboring pixels. Thus it forces the solution to be the same in neighborhood.
+
+
+(b)
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c}
+ $\lambda$ & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 &8\\
+\hline
+optval &78.8310 &77.2784 & 72.8403 & 61.8807  & 47.7741 & 34.4890 & 23.6211 & 15.4753 & 9.7419
+\end{tabular}
+\end{center}
+
+\begin{figure}[H]
+  \centering
+\includegraphics[width=4in]{0}
+  \caption[]
+   { original image vs. solution image($\lambda=0$)}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+\includegraphics[width=4in]{1}
+  \caption[]
+   { original image vs. solution image($\lambda=1$)}
+\end{figure}
+\begin{figure}[H]
+  \centering
+\includegraphics[width=4in]{2}
+  \caption[]
+   { original image vs. solution image($\lambda=2$)}
+\end{figure}
+\begin{figure}[H]
+  \centering
+\includegraphics[width=4in]{3}
+  \caption[]
+   { original image vs. solution image($\lambda=3$)}
+\end{figure}
+\begin{figure}[H]
+  \centering
+\includegraphics[width=4in]{4}
+  \caption[]
+   { original image vs. solution image($\lambda=4$)}
+\end{figure}
+\begin{figure}[hb]
+  \centering
+\includegraphics[width=4in]{5}
+  \caption[]
+   { original image vs. solution image($\lambda=5$)}
+\end{figure}
+\begin{figure}[H]
+  \centering
+\includegraphics[width=4in]{6}
+  \caption[]
+   { original image vs. solution image($\lambda=6$)}
+\end{figure}
+\begin{figure}[H]
+  \centering
+\includegraphics[width=4in]{7}
+  \caption[]
+   { original image vs. solution image($\lambda=7$)}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+\includegraphics[width=4in]{8}
+  \caption[]
+   { original image vs. solution image($\lambda=8$)}
+\end{figure}
+
+
+The points in histogram are centered around 0 first, then spreading as  $\lambda$ increading.
+\\
+
+(b,8pts) Writing problems in DCP form.
+\begin{enumerate}
+    \item 
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
