@@ -1,3 +1,3 @@
-Homework for 36765 - Convex Optimization (CMU)
+Homework for 21880 - Convex Optimization (CMU)
 
 https://www.stat.cmu.edu/~ryantibs/convexopt-F16/
